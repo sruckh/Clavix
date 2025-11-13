@@ -1,0 +1,221 @@
+import { Command } from '@oclif/core';
+import inquirer from 'inquirer';
+import chalk from 'chalk';
+import * as path from 'path';
+import JSON5 from 'json5';
+import { AgentManager } from '../../core/agent-manager';
+import { DocInjector } from '../../core/doc-injector';
+import { FileSystem } from '../../utils/file-system';
+import { ClavixConfig, DEFAULT_CONFIG } from '../../types/config';
+import { CommandTemplate } from '../../types/agent';
+
+export default class Init extends Command {
+  static description = 'Initialize Clavix in the current project';
+
+  static examples = [
+    '<%= config.bin %> <%= command.id %>',
+  ];
+
+  async run(): Promise<void> {
+    console.log(chalk.bold.cyan('\n🚀 Clavix Initialization\n'));
+
+    try {
+      // Check if already initialized
+      if (await FileSystem.exists('.clavix')) {
+        const { reinit } = await inquirer.prompt([
+          {
+            type: 'confirm',
+            name: 'reinit',
+            message: 'Clavix is already initialized. Reinitialize?',
+            default: false,
+          },
+        ]);
+
+        if (!reinit) {
+          console.log(chalk.yellow('\n✓ Initialization cancelled\n'));
+          return;
+        }
+      }
+
+      // Select agent
+      const agentManager = new AgentManager();
+      const agents = agentManager.getAvailableAgents();
+
+      console.log(chalk.gray('Select your AI agent:\n'));
+
+      const { selectedAgent } = await inquirer.prompt([
+        {
+          type: 'list',
+          name: 'selectedAgent',
+          message: 'Which AI agent are you using?',
+          choices: [
+            {
+              name: 'Claude Code - AI-powered CLI for Claude',
+              value: 'claude-code',
+            },
+            {
+              name: chalk.gray('Cursor (coming soon)'),
+              value: null,
+              disabled: true,
+            },
+            {
+              name: chalk.gray('Windsurf (coming soon)'),
+              value: null,
+              disabled: true,
+            },
+          ],
+        },
+      ]);
+
+      if (!selectedAgent) {
+        console.log(chalk.red('\n✗ No agent selected\n'));
+        return;
+      }
+
+      // Create .clavix directory structure
+      console.log(chalk.cyan('\n📁 Creating directory structure...'));
+      await this.createDirectoryStructure();
+
+      // Generate config
+      console.log(chalk.cyan('⚙️  Generating configuration...'));
+      await this.generateConfig(selectedAgent);
+
+      // Generate INSTRUCTIONS.md
+      await this.generateInstructions();
+
+      // Generate slash commands
+      const adapter = agentManager.requireAdapter(selectedAgent);
+      console.log(chalk.cyan(`📝 Generating ${adapter.displayName} slash commands...`));
+      await this.generateSlashCommands(adapter);
+
+      // Inject documentation blocks
+      console.log(chalk.cyan('📄 Injecting documentation blocks...'));
+      await this.injectDocumentation(adapter);
+
+      // Success message
+      console.log(chalk.bold.green('\n✅ Clavix initialized successfully!\n'));
+      console.log(chalk.gray('Next steps:'));
+      console.log(chalk.gray('  • Slash commands are now available in your AI agent'));
+      console.log(chalk.gray('  • Run'), chalk.cyan('clavix --help'), chalk.gray('to see all commands'));
+      console.log(chalk.gray('  • Try'), chalk.cyan('/clavix:improve'), chalk.gray('to optimize a prompt'));
+      console.log(chalk.gray('  • Use'), chalk.cyan('/clavix:prd'), chalk.gray('to generate a PRD\n'));
+    } catch (error: any) {
+      console.error(chalk.red('\n✗ Initialization failed:'), error.message);
+      if (error.hint) {
+        console.error(chalk.yellow('  Hint:'), error.hint);
+      }
+      throw error;
+    }
+  }
+
+  private async createDirectoryStructure(): Promise<void> {
+    const dirs = [
+      '.clavix',
+      '.clavix/sessions',
+      '.clavix/outputs',
+      '.clavix/templates',
+    ];
+
+    for (const dir of dirs) {
+      await FileSystem.ensureDir(dir);
+    }
+  }
+
+  private async generateConfig(agent: string): Promise<void> {
+    const config: ClavixConfig = {
+      ...DEFAULT_CONFIG,
+      agent,
+    };
+
+    const configPath = '.clavix/config.json';
+    const configContent = JSON5.stringify(config, null, 2);
+    await FileSystem.writeFileAtomic(configPath, configContent);
+  }
+
+  private async generateInstructions(): Promise<void> {
+    const instructions = `# Clavix Instructions
+
+Welcome to Clavix! This directory contains your local Clavix configuration and data.
+
+## Directory Structure
+
+- \`config.json\` - Your Clavix configuration
+- \`sessions/\` - Conversational mode session files
+- \`outputs/\` - Generated PRDs and optimized prompts
+- \`templates/\` - Custom templates (optional)
+
+## Available Commands
+
+- \`clavix init\` - Initialize Clavix (you just ran this!)
+- \`clavix improve <prompt>\` - Improve a prompt directly
+- \`clavix prd\` - Generate a PRD through guided questions
+- \`clavix start\` - Start conversational mode
+- \`clavix summarize\` - Analyze conversation and extract prompt
+- \`clavix list\` - List sessions and outputs
+- \`clavix update\` - Update Clavix managed blocks
+
+## Slash Commands (AI Agent)
+
+If using Claude Code, the following slash commands are now available:
+
+- \`/clavix:improve [prompt]\` - Improve a prompt
+- \`/clavix:prd\` - Generate a PRD
+- \`/clavix:start\` - Start conversational mode
+- \`/clavix:summarize\` - Summarize conversation
+
+## Customization
+
+You can customize templates by adding files to the \`templates/\` directory.
+See documentation for template format details.
+
+## Need Help?
+
+- Documentation: https://github.com/Bob5k/Clavix
+- Issues: https://github.com/Bob5k/Clavix/issues
+`;
+
+    await FileSystem.writeFileAtomic('.clavix/INSTRUCTIONS.md', instructions);
+  }
+
+  private async generateSlashCommands(adapter: any): Promise<void> {
+    const templateDir = path.join(__dirname, '../../../src/templates/slash-commands/claude-code');
+    const commandFiles = await FileSystem.listFiles(templateDir, /\.md$/);
+
+    const templates: CommandTemplate[] = [];
+
+    for (const file of commandFiles) {
+      const content = await FileSystem.readFile(path.join(templateDir, file));
+      const name = file.replace('.md', '');
+
+      templates.push({
+        name,
+        content,
+        description: this.extractDescription(content),
+      });
+    }
+
+    await adapter.generateCommands(templates);
+  }
+
+  private async injectDocumentation(adapter: any): Promise<void> {
+    // Inject AGENTS.md
+    const agentsContent = DocInjector.getDefaultAgentsContent();
+    await DocInjector.injectBlock('AGENTS.md', this.extractClavixBlock(agentsContent));
+
+    // Inject CLAUDE.md if Claude Code selected
+    if (adapter.name === 'claude-code') {
+      const claudeContent = DocInjector.getDefaultClaudeContent();
+      await DocInjector.injectBlock('CLAUDE.md', this.extractClavixBlock(claudeContent));
+    }
+  }
+
+  private extractDescription(content: string): string {
+    const match = content.match(/description:\s*(.+)/);
+    return match ? match[1] : '';
+  }
+
+  private extractClavixBlock(content: string): string {
+    const match = content.match(/<!-- CLAVIX:START -->([\s\S]*?)<!-- CLAVIX:END -->/);
+    return match ? match[1].trim() : content;
+  }
+}

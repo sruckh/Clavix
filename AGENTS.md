@@ -16,3 +16,16 @@ Use `@/openspec/AGENTS.md` to learn:
 Keep this managed block so 'openspec update' can refresh the instructions.
 
 <!-- OPENSPEC:END -->
+
+<!-- CLAVIX:START -->
+# Clavix - Prompt Improvement Assistant
+
+Clavix is installed in this project. Use the following slash commands:
+
+- `/clavix:prd` - Generate a PRD through guided questions
+- `/clavix:improve [prompt]` - Improve a prompt directly
+- `/clavix:start` - Start conversational mode for iterative refinement
+- `/clavix:summarize` - Extract optimized prompt from conversation
+
+For more information, run `clavix --help` in your terminal.
+<!-- CLAVIX:END -->

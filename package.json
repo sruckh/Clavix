@@ -1,0 +1,87 @@
+{
+  "name": "clavix",
+  "version": "0.1.0",
+  "description": "AI prompt improvement and PRD generation CLI tool for developers",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "clavix": "./bin/clavix.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node src/index.ts",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\"",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bob5k/Clavix.git"
+  },
+  "keywords": [
+    "cli",
+    "ai",
+    "prompt",
+    "prd",
+    "claude",
+    "claude-code",
+    "developer-tools",
+    "prompt-engineering",
+    "requirements"
+  ],
+  "author": "Mike",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Bob5k/Clavix/issues"
+  },
+  "homepage": "https://github.com/Bob5k/Clavix#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@oclif/core": "^4.8.0",
+    "@oclif/plugin-help": "^6.2.35",
+    "chalk": "^5.6.2",
+    "fs-extra": "^11.3.2",
+    "handlebars": "^4.7.8",
+    "inquirer": "^12.11.1",
+    "json5": "^2.2.3",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/handlebars": "^4.0.40",
+    "@types/inquirer": "^9.0.9",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.10.1",
+    "@types/uuid": "^10.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.46.4",
+    "@typescript-eslint/parser": "^8.46.4",
+    "eslint": "^9.39.1",
+    "jest": "^30.2.0",
+    "prettier": "^3.6.2",
+    "ts-jest": "^29.4.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "oclif": {
+    "bin": "clavix",
+    "dirname": "clavix",
+    "commands": "./dist/cli/commands",
+    "topicSeparator": " ",
+    "plugins": [
+      "@oclif/plugin-help"
+    ]
+  },
+  "files": [
+    "/bin",
+    "/dist",
+    "/npm-shrinkwrap.json",
+    "/oclif.manifest.json"
+  ]
+}

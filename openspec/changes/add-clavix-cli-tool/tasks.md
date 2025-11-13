@@ -1,115 +1,115 @@
 ## 1. Project Setup & Infrastructure
 
-- [ ] 1.1 Initialize npm package with TypeScript configuration
-- [ ] 1.2 Configure oclif CLI framework with TypeScript plugin
-- [ ] 1.3 Set up project structure (src/, bin/, tests/, templates/)
-- [ ] 1.4 Configure tsconfig.json for Node.js v18+ target
-- [ ] 1.5 Set up testing infrastructure (Jest or Mocha)
-- [ ] 1.6 Configure ESLint and Prettier
-- [ ] 1.7 Create package.json with bin entry point and dependencies
-- [ ] 1.8 Set up basic CI/CD configuration (GitHub Actions)
+- [x] 1.1 Initialize npm package with TypeScript configuration
+- [x] 1.2 Configure oclif CLI framework with TypeScript plugin
+- [x] 1.3 Set up project structure (src/, bin/, tests/, templates/)
+- [x] 1.4 Configure tsconfig.json for Node.js v18+ target
+- [x] 1.5 Set up testing infrastructure (Jest or Mocha)
+- [x] 1.6 Configure ESLint and Prettier
+- [x] 1.7 Create package.json with bin entry point and dependencies
+- [x] 1.8 Set up basic CI/CD configuration (GitHub Actions)
 
 ## 2. Phase 1: MVP - Core Infrastructure
 
 ### 2.1 CLI Scaffolding
-- [ ] 2.1.1 Create main CLI entry point (bin/clavix.js)
-- [ ] 2.1.2 Implement base command structure with oclif
-- [ ] 2.1.3 Add version and help command support
-- [ ] 2.1.4 Implement error handling and logging utilities
+- [x] 2.1.1 Create main CLI entry point (bin/clavix.js)
+- [x] 2.1.2 Implement base command structure with oclif
+- [x] 2.1.3 Add version and help command support
+- [x] 2.1.4 Implement error handling and logging utilities
 
 ### 2.2 File System Operations
-- [ ] 2.2.1 Implement FileSystem utility class (src/utils/file-system.ts)
-- [ ] 2.2.2 Add atomic file write operations with backup
-- [ ] 2.2.3 Add directory creation and validation
-- [ ] 2.2.4 Implement file permission checking
-- [ ] 2.2.5 Add safe file read/write with error handling
+- [x] 2.2.1 Implement FileSystem utility class (src/utils/file-system.ts)
+- [x] 2.2.2 Add atomic file write operations with backup
+- [x] 2.2.3 Add directory creation and validation
+- [x] 2.2.4 Implement file permission checking
+- [x] 2.2.5 Add safe file read/write with error handling
 
 ### 2.3 Agent Management System
-- [ ] 2.3.1 Create AgentManager class (src/core/agent-manager.ts)
-- [ ] 2.3.2 Implement agent detection logic (Claude Code)
-- [ ] 2.3.3 Create agent configuration schema (src/types/agent.ts)
-- [ ] 2.3.4 Add agent-specific command generation
-- [ ] 2.3.5 Implement extensible agent registry for future agents
+- [x] 2.3.1 Create AgentManager class (src/core/agent-manager.ts)
+- [x] 2.3.2 Implement agent detection logic (Claude Code)
+- [x] 2.3.3 Create agent configuration schema (src/types/agent.ts)
+- [x] 2.3.4 Add agent-specific command generation
+- [x] 2.3.5 Implement extensible agent registry for future agents
 
 ### 2.4 Documentation Injection System
-- [ ] 2.4.1 Create DocInjector class (src/core/doc-injector.ts)
-- [ ] 2.4.2 Implement managed block detection (<!-- CLAVIX:START/END -->)
-- [ ] 2.4.3 Add AGENTS.md injection logic
-- [ ] 2.4.4 Add CLAUDE.md injection logic
-- [ ] 2.4.5 Implement block replacement vs insertion logic
-- [ ] 2.4.6 Add file backup before modification
-- [ ] 2.4.7 Validate markdown syntax after injection
+- [x] 2.4.1 Create DocInjector class (src/core/doc-injector.ts)
+- [x] 2.4.2 Implement managed block detection (<!-- CLAVIX:START/END -->)
+- [x] 2.4.3 Add AGENTS.md injection logic
+- [x] 2.4.4 Add CLAUDE.md injection logic
+- [x] 2.4.5 Implement block replacement vs insertion logic
+- [x] 2.4.6 Add file backup before modification
+- [x] 2.4.7 Validate markdown syntax after injection
 
 ### 2.5 Slash Command Generation (Claude Code)
-- [ ] 2.5.1 Create slash command templates (src/templates/slash-commands/claude-code/)
-- [ ] 2.5.2 Implement command file generator
-- [ ] 2.5.3 Create `.claude/commands/clavix-improve.md` template
-- [ ] 2.5.4 Create `.claude/commands/clavix-prd.md` template
-- [ ] 2.5.5 Create `.claude/commands/clavix-start.md` template
-- [ ] 2.5.6 Create `.claude/commands/clavix-summarize.md` template
-- [ ] 2.5.7 Add template variable substitution system
+- [x] 2.5.1 Create slash command templates (src/templates/slash-commands/claude-code/)
+- [x] 2.5.2 Implement command file generator
+- [x] 2.5.3 Create `.claude/commands/clavix-improve.md` template
+- [x] 2.5.4 Create `.claude/commands/clavix-prd.md` template
+- [x] 2.5.5 Create `.claude/commands/clavix-start.md` template
+- [x] 2.5.6 Create `.claude/commands/clavix-summarize.md` template
+- [x] 2.5.7 Add template variable substitution system
 
 ### 2.6 Init Command
-- [ ] 2.6.1 Create `clavix init` command (src/cli/commands/init.ts)
-- [ ] 2.6.2 Implement interactive agent selector with Inquirer.js
-- [ ] 2.6.3 Create `.clavix/` directory structure
-- [ ] 2.6.4 Generate `.clavix/config.json` with selected agent
-- [ ] 2.6.5 Create `.clavix/INSTRUCTIONS.md` with usage guide
-- [ ] 2.6.6 Inject managed blocks into AGENTS.md
-- [ ] 2.6.7 Inject managed blocks into CLAUDE.md (if Claude Code selected)
-- [ ] 2.6.8 Generate slash command files for selected agent
-- [ ] 2.6.9 Display success message with next steps
+- [x] 2.6.1 Create `clavix init` command (src/cli/commands/init.ts)
+- [x] 2.6.2 Implement interactive agent selector with Inquirer.js
+- [x] 2.6.3 Create `.clavix/` directory structure
+- [x] 2.6.4 Generate `.clavix/config.json` with selected agent
+- [x] 2.6.5 Create `.clavix/INSTRUCTIONS.md` with usage guide
+- [x] 2.6.6 Inject managed blocks into AGENTS.md
+- [x] 2.6.7 Inject managed blocks into CLAUDE.md (if Claude Code selected)
+- [x] 2.6.8 Generate slash command files for selected agent
+- [x] 2.6.9 Display success message with next steps
 
 ### 2.7 Prompt Improver - Direct Mode
-- [ ] 2.7.1 Create `clavix improve` command (src/cli/commands/improve.ts)
-- [ ] 2.7.2 Implement PromptOptimizer class (src/core/prompt-optimizer.ts)
-- [ ] 2.7.3 Add prompt analysis logic (identify gaps, ambiguities)
-- [ ] 2.7.4 Implement structured prompt generation
-- [ ] 2.7.5 Add context extraction from arguments
-- [ ] 2.7.6 Format output with clear sections
-- [ ] 2.7.7 Add copy-to-clipboard functionality (optional)
+- [x] 2.7.1 Create `clavix improve` command (src/cli/commands/improve.ts)
+- [x] 2.7.2 Implement PromptOptimizer class (src/core/prompt-optimizer.ts)
+- [x] 2.7.3 Add prompt analysis logic (identify gaps, ambiguities)
+- [x] 2.7.4 Implement structured prompt generation
+- [x] 2.7.5 Add context extraction from arguments
+- [x] 2.7.6 Format output with clear sections
+- [x] 2.7.7 Add copy-to-clipboard functionality (optional)
 
 ### 2.8 Basic Testing
-- [ ] 2.8.1 Write unit tests for FileSystem utilities
-- [ ] 2.8.2 Write unit tests for AgentManager
-- [ ] 2.8.3 Write unit tests for DocInjector
-- [ ] 2.8.4 Write integration test for `init` command
-- [ ] 2.8.5 Write integration test for `improve` command
-- [ ] 2.8.6 Test managed block injection and update
+- [x] 2.8.1 Write unit tests for FileSystem utilities
+- [x] 2.8.2 Write unit tests for AgentManager
+- [x] 2.8.3 Write unit tests for DocInjector
+- [x] 2.8.4 Write integration test for `init` command
+- [x] 2.8.5 Write integration test for `improve` command
+- [x] 2.8.6 Test managed block injection and update
 
 ## 3. Phase 2: Core Workflows
 
 ### 3.1 Question Engine
-- [ ] 3.1.1 Create QuestionEngine class (src/core/question-engine.ts)
-- [ ] 3.1.2 Implement Socratic question template system
-- [ ] 3.1.3 Create default PRD questions template (src/templates/prd-questions.md)
-- [ ] 3.1.4 Add question flow management (sequential, conditional)
-- [ ] 3.1.5 Implement answer collection and validation
-- [ ] 3.1.6 Add progress indicator for multi-question flows
+- [x] 3.1.1 Create QuestionEngine class (src/core/question-engine.ts)
+- [x] 3.1.2 Implement Socratic question template system
+- [x] 3.1.3 Create default PRD questions template (src/templates/prd-questions.md)
+- [x] 3.1.4 Add question flow management (sequential, conditional)
+- [x] 3.1.5 Implement answer collection and validation
+- [x] 3.1.6 Add progress indicator for multi-question flows
 
 ### 3.2 PRD Generator
-- [ ] 3.2.1 Create `clavix prd` command (src/cli/commands/prd.ts)
-- [ ] 3.2.2 Implement PrdGenerator class (src/core/prd-generator.ts)
-- [ ] 3.2.3 Integrate QuestionEngine for Socratic questioning
-- [ ] 3.2.4 Create full PRD template (src/templates/full-prd-template.hbs)
-- [ ] 3.2.5 Create quick PRD template (src/templates/quick-prd-template.hbs)
-- [ ] 3.2.6 Implement template rendering with Handlebars
-- [ ] 3.2.7 Add project name extraction/generation
-- [ ] 3.2.8 Generate full-prd.md output file
-- [ ] 3.2.9 Generate quick-prd.md output file
-- [ ] 3.2.10 Save outputs to `.clavix/outputs/[project-name]/`
-- [ ] 3.2.11 Add timestamp metadata to generated files
-- [ ] 3.2.12 Display success message with file locations
+- [x] 3.2.1 Create `clavix prd` command (src/cli/commands/prd.ts)
+- [x] 3.2.2 Implement PrdGenerator class (src/core/prd-generator.ts)
+- [x] 3.2.3 Integrate QuestionEngine for Socratic questioning
+- [x] 3.2.4 Create full PRD template (src/templates/full-prd-template.hbs)
+- [x] 3.2.5 Create quick PRD template (src/templates/quick-prd-template.hbs)
+- [x] 3.2.6 Implement template rendering with Handlebars
+- [x] 3.2.7 Add project name extraction/generation
+- [x] 3.2.8 Generate full-prd.md output file
+- [x] 3.2.9 Generate quick-prd.md output file
+- [x] 3.2.10 Save outputs to `.clavix/outputs/[project-name]/`
+- [x] 3.2.11 Add timestamp metadata to generated files
+- [x] 3.2.12 Display success message with file locations
 
 ### 3.3 Session Management System
-- [ ] 3.3.1 Create SessionManager class (src/core/session-manager.ts)
-- [ ] 3.3.2 Define session schema (src/types/session.ts)
-- [ ] 3.3.3 Implement session creation with timestamp and project name
-- [ ] 3.3.4 Add session file storage in `.clavix/sessions/`
-- [ ] 3.3.5 Implement session metadata tracking
-- [ ] 3.3.6 Add session CRUD operations
-- [ ] 3.3.7 Implement session listing with filters
-- [ ] 3.3.8 Add session search functionality
+- [x] 3.3.1 Create SessionManager class (src/core/session-manager.ts)
+- [x] 3.3.2 Define session schema (src/types/session.ts)
+- [x] 3.3.3 Implement session creation with timestamp and project name
+- [x] 3.3.4 Add session file storage in `.clavix/sessions/`
+- [x] 3.3.5 Implement session metadata tracking
+- [x] 3.3.6 Add session CRUD operations
+- [x] 3.3.7 Implement session listing with filters
+- [x] 3.3.8 Add session search functionality
 
 ### 3.4 Conversational Mode - Start
 - [ ] 3.4.1 Create `clavix start` command (src/cli/commands/start.ts)
