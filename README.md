@@ -1,8 +1,10 @@
 # Clavix
 
 > AI prompt improvement and PRD generation CLI tool for developers
+>
+> **Built on the CLEAR Framework** - Academically-validated prompt engineering methodology
 
-Clavix helps developers create better prompts and structured Product Requirements Documents (PRDs) for AI-assisted development tools like Claude Code. Through Socratic questioning and rule-based analysis, Clavix ensures your requirements are clear, complete, and actionable.
+Clavix helps developers create better prompts and structured Product Requirements Documents (PRDs) for AI-assisted development tools like Claude Code. Using the CLEAR Framework (Concise, Logical, Explicit, Adaptive, Reflective) and Socratic questioning, Clavix ensures your requirements are clear, complete, and actionable.
 
 ## Why Clavix?
 
@@ -13,26 +15,42 @@ AI-assisted development tools produce better code when given better prompts. How
 - **Integrating seamlessly** with your AI development workflow
 - **Working offline** - no API calls, fully local operation
 
+## Why CLEAR?
+
+**CLEAR Framework** is an academically-validated methodology for prompt engineering developed by **Dr. Leo Lo**, Dean of Libraries at the University of New Mexico, and published in the *Journal of Academic Librarianship* (July 2023).
+
+**The five CLEAR components:**
+- **[C] Concise** - Eliminate verbosity, remove pleasantries, focus on essentials
+- **[L] Logical** - Ensure coherent sequencing (context → requirements → constraints → output)
+- **[E] Explicit** - Specify persona, output format, tone, and success criteria
+- **[A] Adaptive** - Provide alternative approaches, flexibility, and customization
+- **[R] Reflective** - Enable validation, edge case analysis, and quality checks
+
+**Benefits:** Research-backed methodology, proven effectiveness, modern approach to AI interaction, educational feedback on prompt improvements.
+
+**Academic Citation:**
+Lo, L. S. (2023). "The CLEAR Path: A Framework for Enhancing Information Literacy through Prompt Engineering." *Journal of Academic Librarianship*, 49(4). [Framework Guide](https://guides.library.tamucc.edu/prompt-engineering/clear)
+
 ## Features
 
-### 🎯 Prompt Engineering
+### 🎯 CLEAR Framework Prompt Engineering
 
-- **Fast Mode** - Quick prompt improvements with smart triage system that detects when deep analysis is needed
-- **Deep Mode** - Comprehensive analysis with alternative phrasings, edge cases, implementation examples, and potential issues
-- **Rule-based Analysis Engine** - Identifies gaps (missing context, success criteria, technical details), ambiguities (vague terms, undefined scope), and strengths
+- **Fast Mode** - CLEAR-guided quick improvements (C, L, E components) with smart triage
+- **Deep Mode** - Full CLEAR framework analysis (C, L, E, A, R) with comprehensive validation
+- **CLEAR Assessment** - Score each component (0-100), overall rating, educational feedback with labeled improvements
 
-### 📋 PRD Generation
+### 📋 CLEAR-Validated PRD Generation
 
 - **Interactive Workflow** - Guided Socratic questioning with sequential and conditional flows
-- **Answer Validation** - Built-in validation for length, patterns, email, URLs, and custom requirements
-- **Dual Output Format** - Comprehensive team PRD (`full-prd.md`) + condensed AI-ready version (`quick-prd.md`)
+- **CLEAR Validation** - Generated PRDs are analyzed for AI consumption quality (C, L, E components)
+- **Dual Output Format** - Comprehensive team PRD (`full-prd.md`) + CLEAR-optimized AI-ready version (`quick-prd.md`)
 - **Handlebars Templates** - Fully customizable PRD formats with template override support
 
-### 💬 Conversational Mode
+### 💬 CLEAR-Optimized Conversational Mode
 
 - **Session Management** - Track conversations with UUID-based sessions, metadata, tags, and status tracking
 - **Message History** - Complete conversation logs with user/assistant role tracking
-- **Analysis Tools** - Extract requirements, identify constraints, define success criteria, and generate mini-PRDs from natural conversations
+- **CLEAR Extraction** - Extract and optimize prompts using CLEAR framework, display both raw and CLEAR-enhanced versions
 - **Search & Filter** - Find sessions by project, agent, status, tags, keywords, or date range
 
 ### 🤖 AI Agent Integration
@@ -58,11 +76,15 @@ AI-assisted development tools produce better code when given better prompts. How
 ### 🔧 CLI Commands
 
 - `clavix init` - Initialize Clavix in your project with agent selection
-- `clavix fast <prompt>` - Quick prompt improvement with smart triage
-- `clavix deep <prompt>` - Comprehensive prompt analysis
-- `clavix prd` - Generate PRD through guided Socratic questions
+- `clavix fast <prompt>` - CLEAR-guided quick improvements (C, L, E components)
+  - `--clear-only` - Show only CLEAR scores without improved prompt
+  - `--framework-info` - Display CLEAR framework information
+- `clavix deep <prompt>` - Full CLEAR framework analysis (C, L, E, A, R)
+  - `--clear-only` - Show only CLEAR scores without improved prompt
+  - `--framework-info` - Display CLEAR framework information
+- `clavix prd` - Generate CLEAR-validated PRD through Socratic questions
 - `clavix start` - Begin conversational session for iterative development
-- `clavix summarize [session-id]` - Extract requirements from conversation
+- `clavix summarize [session-id]` - Extract and CLEAR-optimize prompts from conversation
 - `clavix list` - List sessions and outputs with filtering options
 - `clavix show [session-id]` - View detailed session/output information
 - `clavix config` - Manage configuration (get/set/edit/reset)
@@ -94,34 +116,40 @@ This will:
 - Generate slash commands for your AI agent
 - Inject managed blocks into AGENTS.md and CLAUDE.md
 
-### 2. Improve a Prompt
+### 2. Improve a Prompt with CLEAR Framework
 
-**Fast mode** (quick improvements):
+**Fast mode** (C, L, E components):
 ```bash
 clavix fast "Create a login page"
 ```
 
-**Deep mode** (comprehensive analysis):
+**Deep mode** (full CLEAR - C, L, E, A, R):
 ```bash
 clavix deep "Create a login page"
 ```
 
+**Framework info:**
+```bash
+clavix fast --framework-info
+```
+
 Output:
-- Analysis of gaps and ambiguities
-- Structured prompt with clear sections
-- Changes made summary
-- Smart triage recommendations (fast mode)
-- Alternative phrasings, edge cases, examples (deep mode)
+- **CLEAR Assessment** - Component scores (Conciseness, Logic, Explicitness + Adaptive & Reflective in deep mode)
+- **CLEAR-Optimized Prompt** - Improved version applying all CLEAR principles
+- **CLEAR Changes Made** - Educational feedback labeled with [C], [L], [E], [A], [R] components
+- **Smart Triage** - CLEAR-aware recommendations for when to use deep mode
+- **Adaptive Variations** - Alternative phrasings and structures (deep mode)
+- **Reflection Checklist** - Validation steps and edge cases (deep mode)
 
 ### 3. Use Slash Commands (Claude Code)
 
-After initialization, use these commands in Claude Code:
+After initialization, use these CLEAR-enhanced commands in Claude Code:
 
-- `/clavix:fast [prompt]` - Quick prompt improvements
-- `/clavix:deep [prompt]` - Comprehensive prompt analysis
-- `/clavix:prd` - Generate a PRD
+- `/clavix:fast [prompt]` - CLEAR-guided quick improvements (C, L, E)
+- `/clavix:deep [prompt]` - Full CLEAR framework analysis (C, L, E, A, R)
+- `/clavix:prd` - Generate CLEAR-validated PRD
 - `/clavix:start` - Start conversational mode
-- `/clavix:summarize` - Analyze conversation
+- `/clavix:summarize` - Extract and CLEAR-optimize from conversation
 
 ## Commands
 

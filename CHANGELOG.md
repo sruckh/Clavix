@@ -5,6 +5,47 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2025-01-13
+
+### Added
+
+- **CLEAR Framework Integration** - Academically-validated prompt engineering methodology
+  - Integrated Dr. Leo Lo's CLEAR Framework (Concise, Logical, Explicit, Adaptive, Reflective)
+  - Fast mode now applies C, L, E components with enhanced triage
+  - Deep mode now applies full CLEAR framework (C, L, E, A, R)
+  - PRD mode now validates generated PRDs using CLEAR framework (C, L, E)
+  - Summarize mode now optimizes extracted prompts using CLEAR framework (C, L, E)
+  - Added `--framework-info` flag to all commands for CLEAR education
+  - Added `--clear-only` flag to fast/deep modes for score-only display
+  - Added `--skip-validation` flag to PRD mode
+  - Added `--skip-clear` flag to summarize mode
+  - Academic citation included: Lo, L. S. (2023). "The CLEAR Path: A Framework for Enhancing Information Literacy through Prompt Engineering"
+
+### Changed
+
+- **Core Engine**: `PromptOptimizer` now uses CLEAR framework methods
+  - `applyCLEARFramework(prompt, mode)` orchestrator for all modes
+  - Individual component analyzers: `analyzeConciseness()`, `analyzeLogic()`, `analyzeExplicitness()`, `analyzeAdaptiveness()`, `analyzeReflectiveness()`
+  - `calculateCLEARScore()` for comprehensive scoring
+  - Backward compatibility preserved via `mapCLEARToLegacy()` helper
+
+- **Documentation**: Comprehensive CLEAR framework documentation
+  - README.md now prominently features CLEAR Framework with academic citation
+  - CLAUDE.md updated with CLEAR-aware slash command descriptions
+  - All slash command templates updated to reference CLEAR components
+  - Added "Why CLEAR?" section explaining the framework benefits
+
+- **Output Format**: Enhanced user-facing output
+  - Color-coded CLEAR scores (green ≥80, yellow ≥60, red <60)
+  - Component-labeled improvements ([C], [L], [E], [A], [R])
+  - Educational "Changes Made" section references CLEAR components
+  - PRD validation shows AI consumption quality scores
+  - Summarize generates both raw and CLEAR-optimized versions
+
+### Fixed
+
+- Lint errors: Removed unused error variables in catch blocks
+
 ## [1.1.2] - 2025-11-13
 
 ### Fixed

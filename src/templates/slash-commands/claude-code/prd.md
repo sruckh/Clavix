@@ -1,11 +1,11 @@
 ---
 name: "Clavix: PRD"
-description: Generate a PRD through guided Socratic questioning
+description: CLEAR-validated PRD generation through Socratic questioning
 ---
 
-# Clavix PRD Generation
+# Clavix PRD Generation - CLEAR Framework Validated
 
-You are helping the user create a Product Requirements Document (PRD) using Clavix's Socratic questioning approach.
+You are helping the user create a Product Requirements Document (PRD) using Clavix's Socratic questioning approach. **Generated PRDs are automatically validated using the CLEAR Framework** (Concise, Logical, Explicit) for AI consumption quality.
 
 ## Instructions
 
@@ -65,10 +65,26 @@ You are helping the user create a Product Requirements Document (PRD) using Clav
 
 3. Save both documents to `.clavix/outputs/[project-name]/`
 
-4. Display file paths and suggest next steps.
+4. **CLEAR Framework Validation** (automatic):
+   - After PRD generation, the quick-prd.md is analyzed using CLEAR framework
+   - Assesses AI consumption quality (Conciseness, Logic, Explicitness)
+   - Displays CLEAR scores and improvement suggestions
+   - Only C, L, E components apply (Adaptive & Reflective not applicable to PRDs)
+
+5. Display file paths, CLEAR validation results, and suggest next steps.
+
+## CLEAR Validation
+
+**What gets validated:**
+- **[C] Concise**: Is the PRD focused and to-the-point for AI agents?
+- **[L] Logical**: Does information flow coherently (context → requirements → constraints)?
+- **[E] Explicit**: Are specifications, formats, and success criteria clear?
+
+**Note:** Adaptive (A) and Reflective (R) components are not applicable to PRDs. For prompt-level CLEAR analysis with all 5 components, use `/clavix:deep` instead.
 
 ## Tips
 
 - Ask follow-up questions if answers are too vague
 - Help users think through edge cases
 - Keep the process conversational and supportive
+- Generated PRDs are automatically CLEAR-validated for optimal AI consumption

@@ -1,15 +1,26 @@
-import { Command, Args } from '@oclif/core';
+import { Command, Args, Flags } from '@oclif/core';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
 import { PromptOptimizer } from '../../core/prompt-optimizer';
 
 export default class Fast extends Command {
-  static description = 'Quickly improve a prompt with smart triage';
+  static description = 'Quickly improve a prompt using CLEAR framework (Concise, Logical, Explicit) with smart triage';
 
   static examples = [
     '<%= config.bin %> <%= command.id %> "Create a login page"',
     '<%= config.bin %> <%= command.id %> "Build an API for user management"',
   ];
+
+  static flags = {
+    'clear-only': Flags.boolean({
+      description: 'Show only CLEAR analysis without improved prompt',
+      default: false,
+    }),
+    'framework-info': Flags.boolean({
+      description: 'Display CLEAR framework information',
+      default: false,
+    }),
+  };
 
   static args = {
     prompt: Args.string({
@@ -19,7 +30,13 @@ export default class Fast extends Command {
   };
 
   async run(): Promise<void> {
-    const { args } = await this.parse(Fast);
+    const { args, flags } = await this.parse(Fast);
+
+    // Handle --framework-info flag
+    if (flags['framework-info']) {
+      this.displayFrameworkInfo();
+      return;
+    }
 
     if (!args.prompt || args.prompt.trim().length === 0) {
       console.log(chalk.red('\n✗ Please provide a prompt to improve\n'));
@@ -27,16 +44,38 @@ export default class Fast extends Command {
       return;
     }
 
-    console.log(chalk.bold.cyan('\n🔍 Analyzing prompt in fast mode...\n'));
+    console.log(chalk.bold.cyan('\n🔍 Analyzing prompt using CLEAR framework (fast mode)...\n'));
 
     const optimizer = new PromptOptimizer();
+
+    // Get CLEAR analysis
+    const clearResult = optimizer.applyCLEARFramework(args.prompt, 'fast');
+    const clearScore = optimizer.calculateCLEARScore(clearResult);
+
+    // Also get the full improvement result for triage
     const result = optimizer.improve(args.prompt, 'fast');
 
-    // Check triage result
-    if (result.triageResult?.needsDeepAnalysis) {
-      console.log(chalk.bold.yellow('⚠️  Smart Triage Alert\n'));
+    // Check CLEAR-aware triage result (low scores indicate need for deep mode)
+    const needsDeepAnalysis = result.triageResult?.needsDeepAnalysis ||
+      clearScore.conciseness < 60 ||
+      clearScore.logic < 60 ||
+      clearScore.explicitness < 50;
+
+    if (needsDeepAnalysis) {
+      console.log(chalk.bold.yellow('⚠️  CLEAR Framework Triage Alert\n'));
       console.log(chalk.yellow('Deep analysis is recommended for this prompt because:'));
-      result.triageResult.reasons.forEach((reason) => {
+
+      if (clearScore.conciseness < 60) {
+        console.log(chalk.yellow(`  • Low Conciseness score (${clearScore.conciseness.toFixed(0)}%) - needs detailed verbosity analysis`));
+      }
+      if (clearScore.logic < 60) {
+        console.log(chalk.yellow(`  • Low Logic score (${clearScore.logic.toFixed(0)}%) - needs comprehensive flow analysis`));
+      }
+      if (clearScore.explicitness < 50) {
+        console.log(chalk.yellow(`  • Low Explicitness score (${clearScore.explicitness.toFixed(0)}%) - needs complete specification check`));
+      }
+
+      result.triageResult?.reasons.forEach((reason) => {
         console.log(chalk.yellow(`  • ${reason}`));
       });
       console.log();
@@ -55,138 +94,332 @@ export default class Fast extends Command {
 
       if (proceed === 'deep') {
         console.log(chalk.cyan('\n🔍 Switching to deep mode...\n'));
+        const deepClearResult = optimizer.applyCLEARFramework(args.prompt, 'deep');
+        const deepClearScore = optimizer.calculateCLEARScore(deepClearResult);
         const deepResult = optimizer.improve(args.prompt, 'deep');
-        this.displayDeepModeOutput(deepResult);
+        this.displayDeepModeOutput(deepResult, deepClearResult, deepClearScore);
         return;
       }
 
       console.log(chalk.yellow('\n⚠️  Proceeding with fast mode as requested\n'));
     }
 
-    // Display analysis
-    this.displayFastModeOutput(result);
+    // Handle --clear-only flag
+    if (flags['clear-only']) {
+      this.displayCLEAROnlyAnalysis(clearResult, clearScore);
+      return;
+    }
+
+    // Display full analysis
+    this.displayFastModeOutput(result, clearResult, clearScore);
   }
 
-  private displayFastModeOutput(result: any): void {
-    console.log(chalk.bold('Original Prompt:'));
-    console.log(chalk.gray(result.original));
+  private displayFastModeOutput(result: any, clearResult: any, clearScore: any): void {
+    console.log(chalk.bold.cyan('🎯 CLEAR Analysis (Fast Mode)\n'));
+
+    // Display CLEAR Assessment
+    console.log(chalk.bold('📊 CLEAR Framework Assessment:\n'));
+
+    const getScoreColor = (score: number) => {
+      if (score >= 80) return chalk.green;
+      if (score >= 60) return chalk.yellow;
+      return chalk.red;
+    };
+
+    // Conciseness
+    const cColor = getScoreColor(clearScore.conciseness);
+    console.log(cColor(`  [C] Conciseness: ${clearScore.conciseness.toFixed(0)}%`));
+    if (clearResult.conciseness.issues.length > 0) {
+      clearResult.conciseness.issues.forEach((issue: string) => {
+        console.log(cColor(`      • ${issue}`));
+      });
+    }
     console.log();
 
-    // Quality assessment
-    if (result.qualityAssessment?.isAlreadyGood) {
-      console.log(chalk.bold.green('✅ Already Good!'));
-      console.log(
-        chalk.green(
-          `  This prompt meets ${result.qualityAssessment.criteriaMetCount}/${result.qualityAssessment.totalCriteria} quality criteria`
-        )
-      );
-      console.log();
-    }
-
-    // Display analysis results
-    if (result.analysis.strengths.length > 0) {
-      console.log(chalk.bold.green('✓ Strengths:'));
-      result.analysis.strengths.forEach((strength: string) => {
-        console.log(chalk.green(`  • ${strength}`));
+    // Logic
+    const lColor = getScoreColor(clearScore.logic);
+    console.log(lColor(`  [L] Logic: ${clearScore.logic.toFixed(0)}%`));
+    if (clearResult.logic.issues.length > 0) {
+      clearResult.logic.issues.forEach((issue: string) => {
+        console.log(lColor(`      • ${issue}`));
       });
-      console.log();
     }
+    console.log();
 
-    if (result.analysis.gaps.length > 0) {
-      console.log(chalk.bold.yellow('⚠ Gaps:'));
-      result.analysis.gaps.forEach((gap: string) => {
-        console.log(chalk.yellow(`  • ${gap}`));
+    // Explicitness
+    const eColor = getScoreColor(clearScore.explicitness);
+    console.log(eColor(`  [E] Explicitness: ${clearScore.explicitness.toFixed(0)}%`));
+    if (clearResult.explicitness.issues.length > 0) {
+      clearResult.explicitness.issues.forEach((issue: string) => {
+        console.log(eColor(`      • ${issue}`));
       });
-      console.log();
     }
+    console.log();
 
-    if (result.analysis.ambiguities.length > 0) {
-      console.log(chalk.bold.red('⚠ Ambiguities:'));
-      result.analysis.ambiguities.forEach((ambiguity: string) => {
-        console.log(chalk.red(`  • ${ambiguity}`));
-      });
-      console.log();
-    }
+    // Overall score
+    const overallColor = getScoreColor(clearScore.overall);
+    console.log(overallColor.bold(`  Overall CLEAR Score: ${clearScore.overall.toFixed(0)}% (${clearScore.rating})\n`));
 
-    if (result.analysis.suggestions.length > 0) {
-      console.log(chalk.bold.blue('💡 Suggestions:'));
-      result.analysis.suggestions.forEach((suggestion: string) => {
-        console.log(chalk.blue(`  • ${suggestion}`));
-      });
-      console.log();
-    }
-
-    // Changes made summary
-    if (result.changesSummary?.changes.length > 0) {
-      console.log(chalk.bold.magenta('📝 Changes Made:'));
-      result.changesSummary.changes.forEach((change: string) => {
-        console.log(chalk.magenta(`  • ${change}`));
-      });
-      console.log();
-    }
+    // Recommendation for deep mode
+    console.log(chalk.blue.bold('💡 Recommendation:'));
+    console.log(chalk.blue('  For Adaptive variations (A) and Reflective validation (R), use:'));
+    console.log(chalk.cyan('  clavix deep "<your prompt>"\n'));
 
     // Display improved prompt
-    console.log(chalk.bold.cyan('✨ Improved Prompt:\n'));
+    console.log(chalk.bold.cyan('✨ CLEAR-Optimized Prompt:\n'));
     console.log(chalk.dim('─'.repeat(80)));
-    console.log(result.improved);
+    console.log(clearResult.improvedPrompt);
     console.log(chalk.dim('─'.repeat(80)));
+    console.log();
 
-    console.log(chalk.gray('\n💡 Tip: Copy the improved prompt above and use it with your AI agent'));
-    console.log(chalk.gray('💡 For comprehensive analysis, use'), chalk.cyan('clavix deep'), chalk.gray('instead\n'));
+    // Changes made (CLEAR-labeled)
+    if (clearResult.changesSummary.length > 0) {
+      console.log(chalk.bold.magenta('📝 CLEAR Changes Made:\n'));
+      clearResult.changesSummary.forEach((change: any) => {
+        const label = chalk.bold(`[${change.component}]`);
+        console.log(chalk.magenta(`  ${label} ${change.change}`));
+      });
+      console.log();
+    }
+
+    console.log(chalk.gray('💡 Tip: Copy the CLEAR-optimized prompt above and use it with your AI agent\n'));
   }
 
-  private displayDeepModeOutput(result: any): void {
-    // Display everything from fast mode
-    this.displayFastModeOutput(result);
+  private displayDeepModeOutput(result: any, clearResult: any, clearScore: any): void {
+    console.log(chalk.bold.cyan('🎯 CLEAR Framework Deep Analysis\n'));
 
-    // Add deep mode specific sections
-    if (result.alternativePhrasings && result.alternativePhrasings.length > 0) {
-      console.log(chalk.bold.cyan('\n🔄 Alternative Phrasings:'));
-      result.alternativePhrasings.forEach((phrasing: string, index: number) => {
-        console.log(chalk.cyan(`  ${index + 1}. ${phrasing}`));
+    // Display CLEAR Assessment (all 5 components for deep mode)
+    console.log(chalk.bold('📊 Framework Assessment:\n'));
+
+    const getScoreColor = (score: number) => {
+      if (score >= 80) return chalk.green;
+      if (score >= 60) return chalk.yellow;
+      return chalk.red;
+    };
+
+    // C, L, E (same as fast mode)
+    const cColor = getScoreColor(clearScore.conciseness);
+    console.log(cColor(`  [C] Concise: ${clearScore.conciseness.toFixed(0)}%`));
+    clearResult.conciseness.suggestions.forEach((s: string) => console.log(cColor(`      ${s}`)));
+    console.log();
+
+    const lColor = getScoreColor(clearScore.logic);
+    console.log(lColor(`  [L] Logical: ${clearScore.logic.toFixed(0)}%`));
+    clearResult.logic.suggestions.forEach((s: string) => console.log(lColor(`      ${s}`)));
+    console.log();
+
+    const eColor = getScoreColor(clearScore.explicitness);
+    console.log(eColor(`  [E] Explicit: ${clearScore.explicitness.toFixed(0)}%`));
+    clearResult.explicitness.suggestions.forEach((s: string) => console.log(eColor(`      ${s}`)));
+    console.log();
+
+    // A, R (deep mode only)
+    if (clearResult.adaptiveness) {
+      const aColor = getScoreColor(clearScore.adaptiveness || 0);
+      console.log(aColor(`  [A] Adaptive: ${(clearScore.adaptiveness || 0).toFixed(0)}%`));
+      console.log(aColor(`      See "Adaptive Variations" section below`));
+      console.log();
+    }
+
+    if (clearResult.reflectiveness) {
+      const rColor = getScoreColor(clearScore.reflectiveness || 0);
+      console.log(rColor(`  [R] Reflective: ${(clearScore.reflectiveness || 0).toFixed(0)}%`));
+      console.log(rColor(`      See "Reflection Checklist" section below`));
+      console.log();
+    }
+
+    // Overall
+    const overallColor = getScoreColor(clearScore.overall);
+    console.log(overallColor.bold(`  Overall CLEAR Score: ${clearScore.overall.toFixed(0)}% (${clearScore.rating})\n`));
+
+    // Display improved prompt
+    console.log(chalk.bold.cyan('✨ CLEAR-Optimized Prompt:\n'));
+    console.log(chalk.dim('─'.repeat(80)));
+    console.log(clearResult.improvedPrompt);
+    console.log(chalk.dim('─'.repeat(80)));
+    console.log();
+
+    // Changes made
+    if (clearResult.changesSummary.length > 0) {
+      console.log(chalk.bold.magenta('📝 CLEAR Changes Made:\n'));
+      clearResult.changesSummary.forEach((change: any) => {
+        console.log(chalk.magenta(`  [${change.component}] ${change.change}`));
       });
       console.log();
     }
 
-    if (result.edgeCases && result.edgeCases.length > 0) {
-      console.log(chalk.bold.yellow('🔍 Edge Cases to Consider:'));
-      result.edgeCases.forEach((edgeCase: string) => {
-        console.log(chalk.yellow(`  • ${edgeCase}`));
-      });
-      console.log();
+    // Adaptive Variations (A)
+    if (clearResult.adaptiveness) {
+      console.log(chalk.bold.cyan('🔄 Adaptive Variations:\n'));
+
+      if (clearResult.adaptiveness.alternativePhrasings.length > 0) {
+        console.log(chalk.cyan('  Alternative Phrasings:'));
+        clearResult.adaptiveness.alternativePhrasings.forEach((p: string, i: number) => {
+          console.log(chalk.cyan(`    ${i + 1}. ${p}`));
+        });
+        console.log();
+      }
+
+      if (clearResult.adaptiveness.alternativeStructures.length > 0) {
+        console.log(chalk.cyan('  Alternative Structures:'));
+        clearResult.adaptiveness.alternativeStructures.forEach((alt: any, i: number) => {
+          console.log(chalk.cyan(`    ${i + 1}. ${alt.name}`));
+          console.log(chalk.gray(`       ${alt.benefits}`));
+        });
+        console.log();
+      }
+
+      if (clearResult.adaptiveness.temperatureRecommendation !== undefined) {
+        console.log(chalk.cyan(`  Recommended Temperature: ${clearResult.adaptiveness.temperatureRecommendation}`));
+        console.log();
+      }
     }
 
-    if (result.implementationExamples) {
-      console.log(chalk.bold.green('✅ Good Implementation Examples:'));
-      result.implementationExamples.good.forEach((example: string) => {
-        console.log(chalk.green(`  • ${example}`));
-      });
-      console.log();
+    // Reflection Checklist (R)
+    if (clearResult.reflectiveness) {
+      console.log(chalk.bold.yellow('🤔 Reflection Checklist:\n'));
 
-      console.log(chalk.bold.red('❌ Bad Implementation Examples:'));
-      result.implementationExamples.bad.forEach((example: string) => {
-        console.log(chalk.red(`  • ${example}`));
-      });
-      console.log();
+      if (clearResult.reflectiveness.validationChecklist.length > 0) {
+        console.log(chalk.yellow('  Validation Steps:'));
+        clearResult.reflectiveness.validationChecklist.forEach((item: string) => {
+          console.log(chalk.yellow(`    ☐ ${item}`));
+        });
+        console.log();
+      }
+
+      if (clearResult.reflectiveness.edgeCases.length > 0) {
+        console.log(chalk.yellow('  Edge Cases to Consider:'));
+        clearResult.reflectiveness.edgeCases.forEach((ec: string) => {
+          console.log(chalk.yellow(`    • ${ec}`));
+        });
+        console.log();
+      }
+
+      if (clearResult.reflectiveness.potentialIssues.length > 0) {
+        console.log(chalk.yellow('  What Could Go Wrong:'));
+        clearResult.reflectiveness.potentialIssues.forEach((issue: string) => {
+          console.log(chalk.yellow(`    • ${issue}`));
+        });
+        console.log();
+      }
+
+      if (clearResult.reflectiveness.factCheckingSteps.length > 0) {
+        console.log(chalk.yellow('  Fact-Checking Steps:'));
+        clearResult.reflectiveness.factCheckingSteps.forEach((step: string) => {
+          console.log(chalk.yellow(`    • ${step}`));
+        });
+        console.log();
+      }
     }
 
-    if (result.alternativeStructures && result.alternativeStructures.length > 0) {
-      console.log(chalk.bold.blue('📋 Alternative Prompt Structures:'));
-      result.alternativeStructures.forEach((alt: any, index: number) => {
-        console.log(chalk.blue(`  ${index + 1}. ${alt.structure}`));
-        console.log(chalk.gray(`     → ${alt.benefits}`));
-      });
-      console.log();
-    }
+    console.log(chalk.gray('💡 Full CLEAR framework analysis complete!\n'));
+  }
 
-    if (result.potentialIssues && result.potentialIssues.length > 0) {
-      console.log(chalk.bold.red('⚠️  What Could Go Wrong:'));
-      result.potentialIssues.forEach((issue: string) => {
-        console.log(chalk.red(`  • ${issue}`));
-      });
-      console.log();
-    }
+  private displayCLEAROnlyAnalysis(clearResult: any, clearScore: any): void {
+    console.log(chalk.bold.cyan('🎯 CLEAR Framework Analysis Only\n'));
 
-    console.log(chalk.gray('💡 Deep mode analysis complete!\n'));
+    const getScoreColor = (score: number) => {
+      if (score >= 80) return chalk.green;
+      if (score >= 60) return chalk.yellow;
+      return chalk.red;
+    };
+
+    console.log(chalk.bold('📊 CLEAR Assessment:\n'));
+
+    // Conciseness
+    const cColor = getScoreColor(clearScore.conciseness);
+    console.log(cColor.bold(`  [C] Conciseness: ${clearScore.conciseness.toFixed(0)}%`));
+    console.log(cColor(`      Verbosity: ${clearResult.conciseness.verbosityCount} instances`));
+    console.log(cColor(`      Pleasantries: ${clearResult.conciseness.pleasantriesCount} instances`));
+    console.log(cColor(`      Signal-to-noise: ${clearResult.conciseness.signalToNoiseRatio.toFixed(2)}`));
+    clearResult.conciseness.issues.forEach((issue: string) => {
+      console.log(cColor(`      • ${issue}`));
+    });
+    console.log();
+
+    // Logic
+    const lColor = getScoreColor(clearScore.logic);
+    console.log(lColor.bold(`  [L] Logic: ${clearScore.logic.toFixed(0)}%`));
+    console.log(lColor(`      Coherent Flow: ${clearResult.logic.hasCoherentFlow ? 'Yes' : 'No'}`));
+    clearResult.logic.issues.forEach((issue: string) => {
+      console.log(lColor(`      • ${issue}`));
+    });
+    console.log();
+
+    // Explicitness
+    const eColor = getScoreColor(clearScore.explicitness);
+    console.log(eColor.bold(`  [E] Explicitness: ${clearScore.explicitness.toFixed(0)}%`));
+    console.log(eColor(`      Persona: ${clearResult.explicitness.hasPersona ? '✓' : '✗'}`));
+    console.log(eColor(`      Output Format: ${clearResult.explicitness.hasOutputFormat ? '✓' : '✗'}`));
+    console.log(eColor(`      Tone/Style: ${clearResult.explicitness.hasToneStyle ? '✓' : '✗'}`));
+    console.log(eColor(`      Success Criteria: ${clearResult.explicitness.hasSuccessCriteria ? '✓' : '✗'}`));
+    console.log(eColor(`      Examples: ${clearResult.explicitness.hasExamples ? '✓' : '✗'}`));
+    clearResult.explicitness.issues.forEach((issue: string) => {
+      console.log(eColor(`      • ${issue}`));
+    });
+    console.log();
+
+    // Overall
+    const overallColor = getScoreColor(clearScore.overall);
+    console.log(overallColor.bold(`  Overall Score: ${clearScore.overall.toFixed(0)}% (${clearScore.rating})\n`));
+
+    console.log(chalk.gray('Use without --clear-only flag to see improved prompt and changes.\n'));
+  }
+
+  private displayFrameworkInfo(): void {
+    console.log(chalk.bold.cyan('\n🎯 CLEAR Framework for Prompt Engineering\n'));
+
+    console.log(chalk.bold('What is CLEAR?\n'));
+    console.log('CLEAR is an academically-validated framework for creating effective prompts:');
+    console.log();
+
+    console.log(chalk.green.bold('  [C] Concise'));
+    console.log(chalk.green('      Eliminate verbosity and pleasantries'));
+    console.log(chalk.green('      Focus on essential information'));
+    console.log(chalk.green('      Example: "Please could you maybe help" → "Create"'));
+    console.log();
+
+    console.log(chalk.blue.bold('  [L] Logical'));
+    console.log(chalk.blue('      Ensure coherent sequencing'));
+    console.log(chalk.blue('      Structure: Context → Requirements → Constraints → Output'));
+    console.log(chalk.blue('      Example: Put background before asking for results'));
+    console.log();
+
+    console.log(chalk.yellow.bold('  [E] Explicit'));
+    console.log(chalk.yellow('      Specify persona, format, tone, and success criteria'));
+    console.log(chalk.yellow('      Define exactly what you want'));
+    console.log(chalk.yellow('      Example: "Build a dashboard" → "Build a React analytics dashboard with charts"'));
+    console.log();
+
+    console.log(chalk.magenta.bold('  [A] Adaptive (Deep Mode Only)'));
+    console.log(chalk.magenta('      Provide alternative approaches'));
+    console.log(chalk.magenta('      Flexibility and customization'));
+    console.log(chalk.magenta('      Example: User story, job story, or structured formats'));
+    console.log();
+
+    console.log(chalk.cyan.bold('  [R] Reflective (Deep Mode Only)'));
+    console.log(chalk.cyan('      Enable validation and quality checks'));
+    console.log(chalk.cyan('      Edge cases and "what could go wrong"'));
+    console.log(chalk.cyan('      Example: Fact-checking steps, success criteria validation'));
+    console.log();
+
+    console.log(chalk.bold('Academic Foundation:\n'));
+    console.log('  Developed by: Dr. Leo Lo');
+    console.log('  Institution: Dean of Libraries, University of New Mexico');
+    console.log('  Published: Journal of Academic Librarianship, July 2023');
+    console.log('  Paper: "The CLEAR Path: A Framework for Enhancing Information');
+    console.log('         Literacy through Prompt Engineering"');
+    console.log();
+
+    console.log(chalk.bold('Resources:\n'));
+    console.log('  • Framework Guide: https://guides.library.tamucc.edu/prompt-engineering/clear');
+    console.log('  • Research Paper: https://digitalrepository.unm.edu/cgi/viewcontent.cgi?article=1214&context=ulls_fsp');
+    console.log();
+
+    console.log(chalk.bold('Usage in Clavix:\n'));
+    console.log(chalk.cyan('  clavix fast "prompt"') + chalk.gray('     # Uses C, L, E components'));
+    console.log(chalk.cyan('  clavix deep "prompt"') + chalk.gray('     # Uses full CLEAR (C, L, E, A, R)'));
+    console.log(chalk.cyan('  clavix fast --clear-only') + chalk.gray(' # Show scores only, no improvement'));
+    console.log();
   }
 }

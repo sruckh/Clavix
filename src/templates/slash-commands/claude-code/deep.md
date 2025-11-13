@@ -1,64 +1,73 @@
 ---
 name: "Clavix: Deep"
-description: Comprehensive deep analysis for prompt improvement
+description: Full CLEAR framework analysis (C, L, E, A, R components)
 ---
 
-# Clavix Deep Mode - Comprehensive Prompt Analysis
+# Clavix Deep Mode - Full CLEAR Framework Analysis
 
-You are helping the user perform a comprehensive deep analysis of their prompt using Clavix's deep mode optimization system.
+You are helping the user perform a comprehensive deep analysis using the full CLEAR Framework (all 5 components: Concise, Logical, Explicit, Adaptive, Reflective).
+
+## CLEAR Framework (Deep Mode)
+
+**What is CLEAR?**
+An academically-validated prompt engineering framework by Dr. Leo Lo (University of New Mexico).
+
+**Deep Mode Uses ALL Components:**
+- **[C] Concise**: Remove verbosity, pleasantries, unnecessary words
+- **[L] Logical**: Ensure coherent sequencing (context → requirements → constraints → output)
+- **[E] Explicit**: Add persona, format, tone, success criteria
+- **[A] Adaptive**: Generate alternative phrasings, structures, flexibility
+- **[R] Reflective**: Create validation checklists, edge cases, quality criteria
 
 ## Instructions
 
 1. Take the user's prompt: `$ARGUMENTS`
 
-2. **Perform ALL fast mode analysis first**:
-   - Identify gaps, ambiguities, strengths, suggestions
-   - Generate single structured improved prompt
-   - Create "Changes Made" summary
+2. **Apply Full CLEAR Framework** (C, L, E, A, R):
 
-3. **Add deep mode comprehensive features**:
+   - **Conciseness [C]**: Detailed verbosity analysis
+   - **Logic [L]**: Comprehensive flow analysis
+   - **Explicitness [E]**: Complete specification check
+   - **Adaptiveness [A]**: Multiple variations and approaches
+   - **Reflectiveness [R]**: Full validation and edge case analysis
 
-   a. **Alternative Phrasings**: Generate 2-3 different ways to phrase key requirements
-      - Explain when each phrasing might be more appropriate
-      - Example: "User story format" vs "Job story format" vs "Structured sections"
+3. **Generate Comprehensive Output**:
 
-   b. **Edge Cases in Requirements**: Identify potential edge cases
-      - Focus on requirement-level edge cases, NOT system architecture
-      - Example: "What happens when user is not authenticated?"
-      - Example: "How to handle invalid input?"
+   a. **📊 CLEAR Assessment** (all 5 components with scores)
 
-   c. **Implementation Examples**:
-      - Good implementation patterns (what makes them good)
-      - Bad implementation patterns (what makes them bad)
+   b. **✨ CLEAR-Optimized Prompt** (applying all components)
 
-   d. **Alternative Prompt Structures**:
-      - Suggest 2-3 different ways to structure the prompt
-      - Explain benefits of each approach
-      - Example structures:
-        * User Story Format: "As a [user], I want [goal] so that [benefit]"
-        * Job Story Format: "When [situation], I want to [motivation], so I can [outcome]"
-        * Structured Sections: Objective, Requirements, Constraints, Success Criteria
+   c. **📝 CLEAR Changes Made** (labeled with [C], [L], [E], [A], [R])
 
-   e. **What Could Go Wrong**: Analyze potential issues
-      - How the prompt could be misinterpreted
-      - What assumptions might be wrong
-      - How to make it clearer
+   d. **🔄 Adaptive Variations [A]**:
+      - 2-3 alternative phrasings
+      - Alternative structures (user story, job story, structured)
+      - Temperature recommendations
+      - Explain when each approach is most appropriate
 
-   f. **More Thorough Clarifying Questions**:
-      - Group by category (requirements, constraints, success criteria)
-      - More detailed than fast mode
+   e. **🤔 Reflection Checklist [R]**:
+      - Validation steps for accuracy
+      - Edge cases to consider
+      - "What could go wrong" analysis
+      - Fact-checking steps
+      - Quality criteria
 
-4. Present everything in a comprehensive, well-organized format.
+4. **CLEAR-labeled educational feedback**:
+   - Label all changes with CLEAR component tags
+   - Example: "[C] Removed 15 unnecessary pleasantries"
+   - Example: "[A] See Alternative Structures for 3 different approaches"
+   - Example: "[R] See Reflection Checklist for 5 validation steps"
+
+5. Present everything in comprehensive, CLEAR-organized format.
 
 ## Deep Mode Features
 
-✅ Include (everything from fast mode PLUS):
-- Alternative phrasings of requirements
-- Edge cases in requirements
-- Good/bad implementation examples
-- Multiple prompt structuring approaches
-- "What could go wrong" analysis
-- More thorough clarifying questions
+✅ Include (Full CLEAR Framework):
+- **[C, L, E]**: All fast mode analysis (conciseness, logic, explicitness)
+- **[A] Adaptive**: Alternative phrasings, structures, flexibility, temperature
+- **[R] Reflective**: Validation checklist, edge cases, quality criteria, fact-checking
+- **CLEAR Assessment**: All 5 component scores
+- **CLEAR-labeled Changes**: Educational feedback showing which component improved what
 
 ❌ Do NOT include (these belong in `/clavix:prd`):
 - System architecture recommendations
@@ -124,14 +133,15 @@ Output:
 
 ## When to Use Deep vs Fast vs PRD
 
-- **Fast mode** (`/clavix:fast`): Quick prompt cleanup, simple requirements
-- **Deep mode** (`/clavix:deep`): Comprehensive prompt analysis, complex requirements, exploring alternatives
-- **PRD mode** (`/clavix:prd`): Strategic planning, architecture decisions, business impact
+- **Fast mode** (`/clavix:fast`): C, L, E components - quick CLEAR cleanup
+- **Deep mode** (`/clavix:deep`): Full CLEAR (C, L, E, A, R) - comprehensive analysis with alternatives and validation
+- **PRD mode** (`/clavix:prd`): CLEAR-validated PRD generation - strategic planning with architecture decisions
 
 ## Tips
 
-- Deep mode is for **prompt-level** analysis, not strategic planning
-- Focus on making "good prompts great" with comprehensive coverage
-- Explore alternative approaches and potential issues
-- Help users think through edge cases in their requirements
-- Recommend `/clavix:prd` for architecture, security, and scalability concerns
+- **Apply full CLEAR framework** systematically: all 5 components
+- Label all changes with CLEAR components for education
+- Deep mode focuses on **prompt-level** CLEAR analysis, not strategic architecture
+- Use **[A] Adaptive** to explore alternative approaches
+- Use **[R] Reflective** to identify edge cases and validation needs
+- For architecture, security, and scalability, recommend `/clavix:prd`

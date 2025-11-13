@@ -4,6 +4,7 @@ import * as path from 'path';
 import { SessionManager } from '../../core/session-manager';
 import { ConversationAnalyzer } from '../../core/conversation-analyzer';
 import { FileSystem } from '../../utils/file-system';
+import { PromptOptimizer } from '../../core/prompt-optimizer';
 
 export default class Summarize extends Command {
   static description = 'Analyze a conversation session and extract structured requirements';
@@ -30,6 +31,10 @@ export default class Summarize extends Command {
     output: Flags.string({
       char: 'o',
       description: 'Output directory (defaults to .clavix/outputs/[session-name])',
+    }),
+    'skip-clear': Flags.boolean({
+      description: 'Skip CLEAR framework optimization of extracted prompt',
+      default: false,
     }),
   };
 
@@ -114,17 +119,30 @@ export default class Summarize extends Command {
       const optimizedPromptPath = path.join(outputDir, 'optimized-prompt.md');
       await FileSystem.writeFileAtomic(optimizedPromptPath, optimizedPromptContent);
 
+      // CLEAR optimization (unless skipped)
+      if (!flags['skip-clear']) {
+        await this.applyClearOptimization(optimizedPromptContent, outputDir);
+      }
+
       // Display success
       console.log(chalk.bold.green('✨ Analysis complete!\n'));
       console.log(chalk.bold('Generated files:'));
       console.log(chalk.gray('  • ') + chalk.cyan('mini-prd.md') + chalk.dim(' - Structured requirements document'));
       console.log(chalk.gray('  • ') + chalk.cyan('optimized-prompt.md') + chalk.dim(' - AI-ready development prompt'));
+      if (!flags['skip-clear']) {
+        console.log(chalk.gray('  • ') + chalk.cyan('clear-optimized-prompt.md') + chalk.dim(' - CLEAR-enhanced version (C, L, E)'));
+      }
       console.log();
       console.log(chalk.bold('Output location:'));
       console.log(chalk.dim(`  ${outputDir}`));
       console.log();
       console.log(chalk.bold('Next steps:'));
-      console.log(chalk.gray('  • Use ') + chalk.cyan('optimized-prompt.md') + chalk.gray(' as input for your AI agent'));
+      if (!flags['skip-clear']) {
+        console.log(chalk.gray('  • Use ') + chalk.cyan('clear-optimized-prompt.md') + chalk.gray(' for best AI results (CLEAR-optimized)'));
+        console.log(chalk.gray('  • Or use ') + chalk.cyan('optimized-prompt.md') + chalk.gray(' for the original extracted version'));
+      } else {
+        console.log(chalk.gray('  • Use ') + chalk.cyan('optimized-prompt.md') + chalk.gray(' as input for your AI agent'));
+      }
       console.log(chalk.gray('  • Share ') + chalk.cyan('mini-prd.md') + chalk.gray(' with your team for alignment'));
       console.log();
     } catch (error) {
@@ -187,5 +205,93 @@ export default class Summarize extends Command {
       .replace(/-+/g, '-')
       .replace(/^-|-$/g, '')
       .substring(0, 50);
+  }
+
+  /**
+   * Apply CLEAR framework optimization to extracted prompt
+   * Shows both raw extraction and CLEAR-enhanced version
+   */
+  private async applyClearOptimization(rawPrompt: string, outputDir: string): Promise<void> {
+    try {
+      console.log(chalk.bold.cyan('\n🎯 CLEAR Framework Optimization\n'));
+      console.log(chalk.gray('Applying CLEAR framework to extracted prompt...\n'));
+
+      const optimizer = new PromptOptimizer();
+      const clearResult = optimizer.applyCLEARFramework(rawPrompt, 'fast');
+      const clearScore = optimizer.calculateCLEARScore(clearResult);
+
+      const getScoreColor = (score: number) => {
+        if (score >= 80) return chalk.green;
+        if (score >= 60) return chalk.yellow;
+        return chalk.red;
+      };
+
+      // Display comparison
+      console.log(chalk.bold('CLEAR Analysis of Extracted Prompt:\n'));
+
+      // Conciseness
+      const cColor = getScoreColor(clearScore.conciseness);
+      console.log(cColor(`  [C] Concise: ${clearScore.conciseness.toFixed(0)}%`));
+      if (clearResult.conciseness.suggestions.length > 0) {
+        console.log(cColor(`      ${clearResult.conciseness.suggestions[0]}`));
+      }
+      console.log();
+
+      // Logic
+      const lColor = getScoreColor(clearScore.logic);
+      console.log(lColor(`  [L] Logical: ${clearScore.logic.toFixed(0)}%`));
+      if (clearResult.logic.suggestions.length > 0) {
+        console.log(lColor(`      ${clearResult.logic.suggestions[0]}`));
+      }
+      console.log();
+
+      // Explicitness
+      const eColor = getScoreColor(clearScore.explicitness);
+      console.log(eColor(`  [E] Explicit: ${clearScore.explicitness.toFixed(0)}%`));
+      if (clearResult.explicitness.suggestions.length > 0) {
+        console.log(eColor(`      ${clearResult.explicitness.suggestions[0]}`));
+      }
+      console.log();
+
+      // Overall
+      const overallColor = getScoreColor(clearScore.overall);
+      console.log(overallColor(`  Overall: ${clearScore.overall.toFixed(0)}% (${clearScore.rating})\n`));
+
+      // Display CLEAR changes made
+      if (clearResult.changesSummary && clearResult.changesSummary.length > 0) {
+        console.log(chalk.bold.magenta('CLEAR Improvements Applied:\n'));
+        clearResult.changesSummary.slice(0, 3).forEach((change: any) => {
+          console.log(chalk.magenta(`  [${change.component}] ${change.change}`));
+        });
+        console.log();
+      }
+
+      // Save CLEAR-optimized version
+      const clearOptimizedPath = path.join(outputDir, 'clear-optimized-prompt.md');
+      const clearOptimizedContent = `# CLEAR-Optimized Prompt
+
+${clearResult.improvedPrompt}
+
+---
+
+## CLEAR Framework Assessment
+
+- **[C] Concise**: ${clearScore.conciseness.toFixed(0)}% - ${clearResult.conciseness.suggestions[0] || 'Good'}
+- **[L] Logical**: ${clearScore.logic.toFixed(0)}% - ${clearResult.logic.suggestions[0] || 'Good'}
+- **[E] Explicit**: ${clearScore.explicitness.toFixed(0)}% - ${clearResult.explicitness.suggestions[0] || 'Good'}
+- **Overall**: ${clearScore.overall.toFixed(0)}% (${clearScore.rating})
+
+## Changes Applied
+
+${clearResult.changesSummary.map((c: any) => `- **[${c.component}]** ${c.change}`).join('\n')}
+`;
+
+      await FileSystem.writeFileAtomic(clearOptimizedPath, clearOptimizedContent);
+
+      console.log(chalk.green('✓ CLEAR-optimized version saved\n'));
+
+    } catch {
+      console.log(chalk.yellow('⚠ Could not apply CLEAR optimization\n'));
+    }
   }
 }

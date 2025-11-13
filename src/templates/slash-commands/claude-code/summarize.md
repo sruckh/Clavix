@@ -1,11 +1,11 @@
 ---
 name: "Clavix: Summarize"
-description: Extract and optimize requirements from conversation
+description: Extract and CLEAR-optimize requirements from conversation
 ---
 
-# Clavix Conversation Summarization
+# Clavix Conversation Summarization - CLEAR Framework Enhanced
 
-You are analyzing the conversation history and extracting optimized requirements.
+You are analyzing the conversation history and extracting optimized requirements. **Extracted prompts are automatically enhanced using the CLEAR Framework** (Concise, Logical, Explicit) for optimal AI consumption.
 
 ## Instructions
 
@@ -52,11 +52,29 @@ You are analyzing the conversation history and extracting optimized requirements
    [Success criteria and any important context]
    ```
 
-3. Highlight key insights discovered during the conversation.
+3. **CLEAR Framework Optimization** (automatic):
+   - After extracting the optimized prompt, it's analyzed using CLEAR framework
+   - Applies Conciseness, Logic, and Explicitness enhancements
+   - Displays both raw extraction and CLEAR-enhanced version
+   - Shows CLEAR scores and improvements made
+   - Saves CLEAR-optimized version as `clear-optimized-prompt.md`
 
-4. Suggest saving to `.clavix/outputs/[session-name]/`
+4. Highlight key insights discovered during the conversation.
 
-5. If anything is still unclear or missing, point it out and suggest areas for further discussion.
+5. Suggest saving to `.clavix/outputs/[session-name]/`
+
+6. If anything is still unclear or missing, point it out and suggest areas for further discussion.
+
+## CLEAR Enhancement
+
+**What gets optimized:**
+- **[C] Concise**: Remove any verbosity from extracted requirements
+- **[L] Logical**: Ensure coherent flow (context → requirements → constraints → output)
+- **[E] Explicit**: Add missing specifications, formats, success criteria
+
+**Output files:**
+- `optimized-prompt.md` - Raw extraction from conversation
+- `clear-optimized-prompt.md` - CLEAR-enhanced version (recommended for AI agents)
 
 ## Quality Checks
 
@@ -65,6 +83,7 @@ You are analyzing the conversation history and extracting optimized requirements
 - ✅ Technical constraints identified
 - ✅ Success criteria defined
 - ✅ User needs considered
+- ✅ CLEAR framework applied for AI consumption
 
 ## Example
 
