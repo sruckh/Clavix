@@ -14,7 +14,7 @@ export default class Version extends Command {
       const packageJson = await fs.readJson(packageJsonPath);
 
       console.log(chalk.cyan(`\nClavix v${packageJson.version}\n`));
-    } catch (error) {
+    } catch {
       console.log(chalk.red('\n✗ Could not determine version\n'));
     }
   }

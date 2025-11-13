@@ -263,7 +263,7 @@ export class PromptOptimizer {
   /**
    * Generate improved prompt with structure
    */
-  private generateImprovedPrompt(original: string, analysis: PromptAnalysis): string {
+  private generateImprovedPrompt(original: string, _analysis: PromptAnalysis): string {
     let improved = '# Objective\n\n';
     improved += this.extractOrInferObjective(original) + '\n\n';
 
@@ -346,7 +346,7 @@ export class PromptOptimizer {
     return '- [Describe what the final deliverable should look like]';
   }
 
-  private extractOrInferSuccess(original: string): string {
+  private extractOrInferSuccess(_original: string): string {
     return '- Implementation matches requirements\n- All edge cases handled\n- Code is tested and documented\n- [Add specific success metrics]';
   }
 
@@ -493,7 +493,7 @@ export class PromptOptimizer {
   /**
    * Generate implementation examples (deep mode)
    */
-  private generateImplementationExamples(prompt: string): { good: string[]; bad: string[] } {
+  private generateImplementationExamples(_prompt: string): { good: string[]; bad: string[] } {
     return {
       good: [
         'Clear, specific requirements with measurable outcomes',
@@ -511,7 +511,7 @@ export class PromptOptimizer {
   /**
    * Suggest alternative prompt structures (deep mode)
    */
-  private suggestAlternativeStructures(prompt: string): Array<{ structure: string; benefits: string }> {
+  private suggestAlternativeStructures(_prompt: string): Array<{ structure: string; benefits: string }> {
     return [
       {
         structure: 'User Story Format: As a [user], I want [goal] so that [benefit]',

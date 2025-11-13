@@ -17,15 +17,14 @@ import * as path from 'path';
 import { FileSystem } from '../utils/file-system';
 
 // Use require for uuid to avoid Jest ESM issues
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { v4: uuidv4 } = require('uuid');
 import {
   Session,
-  SessionStatus,
   SessionMessage,
   SessionMetadata,
   SessionFilter,
   SerializedSession,
-  SerializedSessionMessage,
 } from '../types/session';
 
 /**
@@ -93,7 +92,7 @@ export class SessionManager {
 
       const serialized = await fs.readJSON(sessionPath) as SerializedSession;
       return this.deserializeSession(serialized);
-    } catch (error) {
+    } catch {
       return null;
     }
   }
@@ -219,7 +218,7 @@ export class SessionManager {
         }
 
         sessions.push(metadata);
-      } catch (error) {
+      } catch {
         // Skip corrupted session files
         continue;
       }
@@ -281,7 +280,7 @@ export class SessionManager {
         if (hasMessageMatch) {
           matches.push(this.extractMetadata(serialized));
         }
-      } catch (error) {
+      } catch {
         // Skip corrupted session files
         continue;
       }

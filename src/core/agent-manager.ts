@@ -1,4 +1,4 @@
-import { AgentAdapter, AgentType } from '../types/agent';
+import { AgentAdapter } from '../types/agent';
 import { ClaudeCodeAdapter } from './adapters/claude-code-adapter';
 import { IntegrationError } from '../types/errors';
 

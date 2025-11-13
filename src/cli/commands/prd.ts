@@ -4,7 +4,6 @@ import inquirer from 'inquirer';
 import * as path from 'path';
 import { QuestionEngine } from '../../core/question-engine';
 import { PrdGenerator } from '../../core/prd-generator';
-import { FileSystem } from '../../utils/file-system';
 
 export default class Prd extends Command {
   static description = 'Generate a Product Requirements Document through Socratic questioning';

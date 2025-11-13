@@ -32,7 +32,7 @@ export class FileSystem {
         try {
           await fs.copy(backupPath, fullPath);
           await fs.remove(backupPath);
-        } catch (restoreError) {
+        } catch {
           throw new DataError(
             'Failed to write file and restore backup',
             `Check file permissions for ${fullPath}`
@@ -140,7 +140,7 @@ export class FileSystem {
         await fs.copy(fullPath, backupPath);
       }
       return backupPath;
-    } catch (error: any) {
+    } catch {
       throw new PermissionError(
         `Failed to create backup of ${filePath}`,
         'Check file permissions'
@@ -160,7 +160,7 @@ export class FileSystem {
         await fs.copy(backupPath, fullPath);
         await fs.remove(backupPath);
       }
-    } catch (error: any) {
+    } catch {
       throw new DataError(
         `Failed to restore backup for ${filePath}`,
         'Manual recovery may be required'

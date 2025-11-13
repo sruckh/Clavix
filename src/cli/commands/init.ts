@@ -39,7 +39,7 @@ export default class Init extends Command {
 
       // Select agent
       const agentManager = new AgentManager();
-      const agents = agentManager.getAvailableAgents();
+      // const agents = agentManager.getAvailableAgents();
 
       console.log(chalk.gray('Select your AI agent:\n'));
 
@@ -221,7 +221,7 @@ See documentation for template format details.
     }
   }
 
-  private async migrateOldCommands(adapter: any): Promise<void> {
+  private async migrateOldCommands(_adapter: any): Promise<void> {
     // Check for old command structure (.claude/commands/clavix:*.md)
     const oldCommandsPath = '.claude/commands';
 
@@ -251,7 +251,7 @@ See documentation for template format details.
       if (removed > 0) {
         console.log(chalk.green(`  ✓ Migration complete: removed ${removed} old command file(s)`));
       }
-    } catch (error) {
+    } catch {
       // Non-fatal error - log but continue
       console.log(chalk.yellow('  ⚠ Could not migrate old commands (non-fatal)'));
     }
