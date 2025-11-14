@@ -25,6 +25,11 @@ export default class List extends Command {
       description: 'List only outputs',
       default: false,
     }),
+    archived: Flags.boolean({
+      char: 'a',
+      description: 'Include archived projects in outputs',
+      default: false,
+    }),
     project: Flags.string({
       char: 'p',
       description: 'Filter by project name',
@@ -63,7 +68,7 @@ export default class List extends Command {
       if (showSessions) {
         this.log(''); // Add spacing
       }
-      await this.listOutputs(flags.project, flags.limit);
+      await this.listOutputs(flags.project, flags.limit, flags.archived);
     }
   }
 
@@ -129,7 +134,7 @@ export default class List extends Command {
     }
   }
 
-  private async listOutputs(projectFilter?: string, limit?: number): Promise<void> {
+  private async listOutputs(projectFilter?: string, limit?: number, includeArchived = false): Promise<void> {
     this.log(chalk.bold.cyan('📁 Outputs\n'));
 
     const outputsDir = path.join(process.cwd(), '.clavix', 'outputs');
@@ -142,6 +147,10 @@ export default class List extends Command {
 
     const projectDirs = fs.readdirSync(outputsDir).filter(name => {
       const fullPath = path.join(outputsDir, name);
+      // Skip archive directory in main listing
+      if (name === 'archive' && !includeArchived) {
+        return false;
+      }
       return fs.statSync(fullPath).isDirectory();
     });
 
@@ -196,5 +205,74 @@ export default class List extends Command {
     if (projectDirs.length > filteredDirs.length && !limit) {
       this.log(chalk.gray(`  Use ${chalk.cyan('--limit N')} to show more results`));
     }
+
+    // Show archived projects if flag is set
+    if (includeArchived) {
+      await this.listArchivedOutputs(projectFilter, limit);
+    }
+  }
+
+  private async listArchivedOutputs(projectFilter?: string, limit?: number): Promise<void> {
+    const archiveDir = path.join(process.cwd(), '.clavix', 'outputs', 'archive');
+
+    if (!fs.existsSync(archiveDir)) {
+      return; // No archived projects
+    }
+
+    const archivedDirs = fs.readdirSync(archiveDir).filter(name => {
+      const fullPath = path.join(archiveDir, name);
+      return fs.statSync(fullPath).isDirectory();
+    });
+
+    if (archivedDirs.length === 0) {
+      return; // No archived projects
+    }
+
+    // Filter by project if specified
+    let filteredDirs = archivedDirs;
+    if (projectFilter) {
+      filteredDirs = archivedDirs.filter(dir =>
+        dir.toLowerCase().includes(projectFilter.toLowerCase())
+      );
+    }
+
+    // Sort by modification time (most recent first)
+    filteredDirs.sort((a, b) => {
+      const aPath = path.join(archiveDir, a);
+      const bPath = path.join(archiveDir, b);
+      return fs.statSync(bPath).mtime.getTime() - fs.statSync(aPath).mtime.getTime();
+    });
+
+    // Apply limit
+    if (limit) {
+      filteredDirs = filteredDirs.slice(0, limit);
+    }
+
+    if (filteredDirs.length === 0) {
+      return; // No matching archived projects
+    }
+
+    // Display archived section header
+    this.log('');
+    this.log(chalk.bold.cyan('📦 Archived Outputs\n'));
+
+    // Display archived outputs
+    filteredDirs.forEach((projectDir, index) => {
+      const projectPath = path.join(archiveDir, projectDir);
+      const files = fs.readdirSync(projectPath).filter(f => f.endsWith('.md'));
+      const modified = fs.statSync(projectPath).mtime.toLocaleDateString();
+
+      this.log(
+        `  📦 ${chalk.bold(projectDir)} ${chalk.gray('(archived)')}` +
+        `\n     ${chalk.gray('Path:')} ${chalk.dim(path.relative(process.cwd(), projectPath))}` +
+        `\n     ${chalk.gray('Files:')} ${files.join(', ')}` +
+        `\n     ${chalk.gray('Modified:')} ${modified}` +
+        (index < filteredDirs.length - 1 ? '\n' : '')
+      );
+    });
+
+    this.log('');
+    this.log(chalk.gray(`  Showing ${filteredDirs.length} of ${archivedDirs.length} archived directories`));
+    this.log(chalk.gray(`  Use ${chalk.cyan('clavix archive --restore <project>')} to restore a project`));
   }
 }

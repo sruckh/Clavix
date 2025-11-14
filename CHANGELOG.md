@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.1] - 2025-11-14
+
+### 🐛 Fixed
+
+#### Archive Detection Improvements
+- **Enhanced PRD File Detection**: Extended support for multiple naming conventions in archive detection
+  - Now recognizes: `FULL_PRD.md`, `QUICK_PRD.md`, `FULL-PRD.md` (uppercase and hyphenated variants)
+  - Previously only detected: `PRD.md`, `full-prd.md`, `prd.md`, `Full-PRD.md`
+- **Resolved Issue**: Manually archived projects with non-standard PRD filenames now appear in `clavix archive --list`
+- **Technical Changes**:
+  - Updated `possibleFiles` array in `src/core/archive-manager.ts:328`
+  - Updated `possibleFiles` array in `src/core/task-manager.ts:611`
+  - Both detection methods now consistently support all naming variants
+
+**Impact**: Projects archived manually (e.g., via `clavix archive project-name`) that use uppercase or alternative naming conventions are now properly detected and listed.
+
 ## [1.5.0] - 2025-11-14
 
 ### 🚀 Major Features

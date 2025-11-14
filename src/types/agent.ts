@@ -50,5 +50,6 @@ export type AgentType =
   | 'opencode'
   | 'amp'
   | 'agents-md'
+  | 'octo-md'
   | 'windsurf'
   | 'custom';

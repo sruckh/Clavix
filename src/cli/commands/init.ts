@@ -6,6 +6,7 @@ import JSON5 from 'json5';
 import { AgentManager } from '../../core/agent-manager';
 import { DocInjector } from '../../core/doc-injector';
 import { AgentsMdGenerator } from '../../core/adapters/agents-md-generator';
+import { OctoMdGenerator } from '../../core/adapters/octo-md-generator';
 import { FileSystem } from '../../utils/file-system';
 import { ClavixConfig, DEFAULT_CONFIG } from '../../types/config';
 import { CommandTemplate } from '../../types/agent';
@@ -77,6 +78,10 @@ export default class Init extends Command {
               value: 'agents-md',
               checked: true,
             },
+            {
+              name: 'Octofriend (OCTO.md - optimized for Octofriend)',
+              value: 'octo-md',
+            },
           ],
           validate: (answer: string[]) => {
             if (answer.length === 0) {
@@ -115,6 +120,13 @@ export default class Init extends Command {
         if (providerName === 'agents-md') {
           console.log(chalk.gray('  ✓ Generating AGENTS.md...'));
           await AgentsMdGenerator.generate();
+          continue;
+        }
+
+        // Handle octo-md separately (it's not an adapter)
+        if (providerName === 'octo-md') {
+          console.log(chalk.gray('  ✓ Generating OCTO.md...'));
+          await OctoMdGenerator.generate();
           continue;
         }
 
@@ -259,7 +271,7 @@ See documentation for template format details.
   }
 
   private async generateSlashCommands(adapter: any): Promise<void> {
-    const templateDir = path.join(__dirname, '../../templates/slash-commands/claude-code');
+    const templateDir = path.join(__dirname, '../../templates/slash-commands', adapter.name);
     const commandFiles = await FileSystem.listFiles(templateDir, /\.md$/);
 
     const templates: CommandTemplate[] = [];
