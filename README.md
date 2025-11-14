@@ -6,6 +6,37 @@
 
 Clavix helps developers create better prompts and structured Product Requirements Documents (PRDs) for AI-assisted development tools like Claude Code. Using the CLEAR Framework (Concise, Logical, Explicit, Adaptive, Reflective) and Socratic questioning, Clavix ensures your requirements are clear, complete, and actionable.
 
+## Installation
+
+```bash
+npm install -g clavix
+```
+
+**Troubleshooting:**
+- If you encounter permission errors, use `sudo npm install -g clavix` (macOS/Linux)
+- On Windows, run your terminal as Administrator
+- Verify installation with `clavix version`
+
+## Supported Providers
+
+Clavix integrates seamlessly with multiple AI development tools:
+
+| Tool | Slash Commands | Directory | Status |
+|------|----------------|-----------|--------|
+| **Claude Code** | ✅ | `.claude/commands/clavix/` | Fully Supported |
+| **Cursor** | ✅ | `.cursor/commands/` | Fully Supported |
+| **Droid CLI** | ✅ | `.factory/commands/` | Fully Supported |
+| **OpenCode** | ✅ | `.opencode/command/` | Fully Supported |
+| **Amp** | ✅ | `.agents/commands/` | Fully Supported |
+| **Crush CLI** | ✅ | `.crush/commands/clavix/` | Fully Supported |
+| **Universal (agents.md)** | ⚡ No slash commands | `AGENTS.md` | Fully Supported |
+
+**Key Features:**
+- **Multi-Select Support** - Choose multiple tools during `clavix init`
+- **Provider-Specific Formatting** - Commands generated in each tool's native format
+- **Universal Fallback** - `agents.md` works with any tool
+- **Managed Documentation** - Auto-inject and update instructions
+
 ## Why Clavix?
 
 AI-assisted development tools produce better code when given better prompts. However, developers often struggle to write comprehensive, structured prompts that clearly communicate requirements, constraints, and success criteria. Clavix solves this by:
@@ -63,27 +94,23 @@ Lo, L. S. (2023). "The CLEAR Path: A Framework for Enhancing Information Literac
 
 ### 🤖 Multi-Provider AI Agent Integration
 
-**Supported Tools:**
+Clavix works with all major AI development tools (see [Supported Providers](#supported-providers) above).
 
-| Tool | Slash Commands | Directory | Status |
-|------|----------------|-----------|--------|
-| **Claude Code** | ✅ | `.claude/commands/clavix/` | Fully Supported |
-| **Cursor** | ✅ | `.cursor/commands/` | Fully Supported |
-| **Droid CLI** | ✅ | `.factory/commands/` | Fully Supported |
-| **OpenCode** | ✅ | `.opencode/command/` | Fully Supported |
-| **Amp** | ✅ | `.agents/commands/` | Fully Supported |
-| **Crush CLI** | ✅ | `.crush/commands/clavix/` | Fully Supported |
-| **Universal (agents.md)** | ⚡ No slash commands | `AGENTS.md` | Fully Supported |
+**Available Slash Commands:**
+- `/clavix:fast` - Quick CLEAR improvements
+- `/clavix:deep` - Full CLEAR analysis
+- `/clavix:prd` - Generate PRD
+- `/clavix:plan` - Generate task breakdown
+- `/clavix:implement` - Execute tasks
+- `/clavix:archive` - Archive completed projects
+- `/clavix:start` - Start conversational mode
+- `/clavix:summarize` - Extract optimized prompts
 
-**Features:**
-- **Multi-Select Support** - Choose multiple tools during `clavix init` (Space to select, Enter to confirm)
-- **Provider-Specific Formatting** - Automatically generates commands in each tool's native format
-  - Crush CLI uses `$PROMPT` placeholder (vs generic `{{ARGS}}`)
-  - Commands accessible via Ctrl+P or `/` in Crush terminal
-- **Universal Fallback** - `agents.md` provides workflow instructions for tools without slash command support
-- **Slash Commands** - `/clavix:fast`, `/clavix:deep`, `/clavix:prd`, `/clavix:plan`, `/clavix:implement`, `/clavix:archive`, `/clavix:start`, `/clavix:summarize` available in all supported tools
-- **Managed Documentation** - Auto-inject and update instructions in `AGENTS.md` and `CLAUDE.md` with safe managed blocks
-- **Extensible Architecture** - Plugin-based adapter pattern for easy addition of new providers
+**Integration Features:**
+- Provider-specific command formatting (e.g., Crush CLI uses `$PROMPT` placeholder)
+- Interactive multi-select during `clavix init`
+- Automatic documentation injection with managed blocks
+- Extensible plugin-based architecture for adding new providers
 
 ### ⚙️ Configuration & Management
 
@@ -119,17 +146,6 @@ Lo, L. S. (2023). "The CLEAR Path: A Framework for Enhancing Information Literac
 - `clavix config` - Manage configuration (get/set/edit/reset)
 - `clavix update` - Update managed blocks and slash commands
 - `clavix version` - Display version information
-
-## Installation
-
-```bash
-npm install -g clavix
-```
-
-**Troubleshooting:**
-- If you encounter permission errors, use `sudo npm install -g clavix` (macOS/Linux)
-- On Windows, run your terminal as Administrator
-- Verify installation with `clavix version`
 
 ## Quick Start
 
