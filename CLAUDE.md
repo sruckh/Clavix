@@ -20,52 +20,27 @@ Keep this managed block so 'openspec update' can refresh the instructions.
 <!-- CLAVIX:START -->
 ## Clavix Integration
 
-This project uses Clavix for prompt improvement and PRD generation. **Clavix is built on the CLEAR Framework** - an academically-validated prompt engineering methodology developed by Dr. Leo Lo at the University of New Mexico.
-
-### CLEAR Framework
-
-**CLEAR** stands for: Concise, Logical, Explicit, Adaptive, Reflective
-
-- **[C] Concise**: Eliminate verbosity, remove pleasantries, focus on essentials
-- **[L] Logical**: Ensure coherent sequencing (context → requirements → constraints → output)
-- **[E] Explicit**: Specify persona, output format, tone, and success criteria
-- **[A] Adaptive**: Provide alternative approaches and flexibility
-- **[R] Reflective**: Enable validation, edge cases, and quality checks
-
-**Academic Citation**: Lo, L. S. (2023). "The CLEAR Path: A Framework for Enhancing Information Literacy through Prompt Engineering." *Journal of Academic Librarianship*, 49(4). [Framework Guide](https://guides.library.tamucc.edu/prompt-engineering/clear)
-
-### Slash Commands
+This project uses Clavix for prompt improvement and PRD generation. The following slash commands are available:
 
 ### /clavix:fast [prompt]
-**CLEAR-guided quick improvements (C, L, E components)**
-
-Uses Conciseness, Logic, and Explicitness analysis with smart triage. Perfect for making "shitty prompts good" quickly. Displays CLEAR scores and labeled improvements.
+Quick prompt improvements with smart triage. Clavix will analyze your prompt and recommend deep analysis if needed. Perfect for making "shitty prompts good" quickly.
 
 ### /clavix:deep [prompt]
-**Full CLEAR framework analysis (C, L, E, A, R components)**
-
-Comprehensive analysis using all five CLEAR components. Includes alternative phrasings (Adaptive) and validation checklists (Reflective). Use for complex requirements needing thorough exploration.
+Comprehensive prompt analysis with alternative phrasings, edge cases, implementation examples, and potential issues. Use for complex requirements or when you want thorough exploration.
 
 ### /clavix:prd
-**CLEAR-validated PRD generation**
-
-Launch the PRD generation workflow with Socratic questioning. Generated PRDs are validated using CLEAR framework for AI consumption quality. Outputs both comprehensive team PRD and CLEAR-optimized AI-ready version.
+Launch the PRD generation workflow. Clavix will guide you through strategic questions and generate both a comprehensive PRD and a quick-reference version optimized for AI consumption.
 
 ### /clavix:start
-**Conversational mode for iterative development**
-
-Enter conversational mode to discuss requirements naturally. Later use `/clavix:summarize` to extract and CLEAR-optimize prompts from the conversation.
+Enter conversational mode for iterative prompt development. Discuss your requirements naturally, and later use `/clavix:summarize` to extract an optimized prompt.
 
 ### /clavix:summarize
-**Extract and CLEAR-optimize from conversation**
+Analyze the current conversation and extract key requirements into a structured prompt and mini-PRD.
 
-Analyze the conversation and extract key requirements. Applies CLEAR framework optimization, displaying both raw extraction and CLEAR-enhanced version.
+**When to use which mode:**
+- **Fast mode** (`/clavix:fast`): Quick cleanup for simple prompts
+- **Deep mode** (`/clavix:deep`): Comprehensive analysis for complex requirements
+- **PRD mode** (`/clavix:prd`): Strategic planning with architecture and business impact
 
-### When to Use Which Mode
-
-- **Fast mode** (`/clavix:fast`): C, L, E components - quick CLEAR cleanup for simple prompts
-- **Deep mode** (`/clavix:deep`): Full CLEAR (C, L, E, A, R) - when you need alternatives and validation
-- **PRD mode** (`/clavix:prd`): CLEAR-validated strategic planning with architecture and business impact
-
-**Pro tip**: Start complex features with `/clavix:prd` or `/clavix:start` to ensure CLEAR requirements before implementation.
+**Pro tip**: Start complex features with `/clavix:prd` or `/clavix:start` to ensure clear requirements before implementation.
 <!-- CLAVIX:END -->

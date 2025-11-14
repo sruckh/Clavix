@@ -4,6 +4,18 @@
 
 export interface ClavixConfig {
   version: string;
+  providers: string[];
+  templates: TemplateConfig;
+  outputs: OutputConfig;
+  preferences: PreferencesConfig;
+  experimental?: Record<string, unknown>;
+}
+
+/**
+ * Legacy config format from v1.3.0 and earlier
+ */
+export interface LegacyConfig {
+  version: string;
   agent: string;
   templates: TemplateConfig;
   outputs: OutputConfig;
@@ -29,8 +41,8 @@ export interface PreferencesConfig {
 }
 
 export const DEFAULT_CONFIG: ClavixConfig = {
-  version: '1.0.0',
-  agent: 'claude-code',
+  version: '1.4.0',
+  providers: [],
   templates: {
     prdQuestions: 'default',
     fullPrd: 'default',
@@ -46,3 +58,30 @@ export const DEFAULT_CONFIG: ClavixConfig = {
     preserveSessions: true,
   },
 };
+
+/**
+ * Migrate legacy config (v1.3.0 and earlier) to new format
+ */
+export function migrateConfig(legacy: LegacyConfig): ClavixConfig {
+  return {
+    version: '1.4.0',
+    providers: [legacy.agent],
+    templates: legacy.templates,
+    outputs: legacy.outputs,
+    preferences: legacy.preferences,
+    experimental: legacy.experimental,
+  };
+}
+
+/**
+ * Check if config is legacy format
+ */
+export function isLegacyConfig(config: any): config is LegacyConfig {
+  return (
+    config &&
+    typeof config === 'object' &&
+    'agent' in config &&
+    typeof config.agent === 'string' &&
+    !('providers' in config)
+  );
+}

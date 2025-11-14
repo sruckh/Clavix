@@ -1,14 +1,21 @@
 import * as path from 'path';
-import { AgentAdapter, CommandTemplate, ManagedBlock } from '../../types/agent';
+import { BaseAdapter } from './base-adapter';
+import { CommandTemplate, ManagedBlock } from '../../types/agent';
 import { FileSystem } from '../../utils/file-system';
 import { IntegrationError } from '../../types/errors';
 
 /**
  * Claude Code agent adapter
  */
-export class ClaudeCodeAdapter implements AgentAdapter {
+export class ClaudeCodeAdapter extends BaseAdapter {
   readonly name = 'claude-code';
   readonly displayName = 'Claude Code';
+  readonly directory = '.claude/commands/clavix';
+  readonly fileExtension = '.md';
+  readonly features = {
+    supportsSubdirectories: true,
+    supportsFrontmatter: false,
+  };
 
   /**
    * Detect if Claude Code is available in the project
@@ -22,31 +29,10 @@ export class ClaudeCodeAdapter implements AgentAdapter {
    * Get command path for Claude Code
    */
   getCommandPath(): string {
-    return '.claude/commands/clavix';
+    return this.directory;
   }
 
-  /**
-   * Generate slash command files for Claude Code
-   */
-  async generateCommands(templates: CommandTemplate[]): Promise<void> {
-    const commandPath = this.getCommandPath();
-
-    try {
-      // Ensure commands directory exists
-      await FileSystem.ensureDir(commandPath);
-
-      // Generate each command file
-      for (const template of templates) {
-        const filePath = path.join(commandPath, `${template.name}.md`);
-        await FileSystem.writeFileAtomic(filePath, template.content);
-      }
-    } catch (error) {
-      throw new IntegrationError(
-        `Failed to generate Claude Code commands: ${error}`,
-        'Ensure .claude/commands/ directory is writable'
-      );
-    }
-  }
+  // generateCommands is inherited from BaseAdapter
 
   /**
    * Inject documentation blocks into CLAUDE.md
@@ -111,10 +97,5 @@ export class ClaudeCodeAdapter implements AgentAdapter {
     await FileSystem.writeFileAtomic(fullPath, fileContent);
   }
 
-  /**
-   * Escape special regex characters
-   */
-  private escapeRegex(str: string): string {
-    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  }
+  // escapeRegex is inherited from BaseAdapter
 }

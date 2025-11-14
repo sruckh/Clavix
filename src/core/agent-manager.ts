@@ -1,5 +1,9 @@
-import { AgentAdapter } from '../types/agent';
+import { AgentAdapter, ValidationResult } from '../types/agent';
 import { ClaudeCodeAdapter } from './adapters/claude-code-adapter';
+import { CursorAdapter } from './adapters/cursor-adapter';
+import { DroidAdapter } from './adapters/droid-adapter';
+import { OpenCodeAdapter } from './adapters/opencode-adapter';
+import { AmpAdapter } from './adapters/amp-adapter';
 import { IntegrationError } from '../types/errors';
 
 /**
@@ -9,8 +13,12 @@ export class AgentManager {
   private adapters: Map<string, AgentAdapter> = new Map();
 
   constructor() {
-    // Register built-in adapters
+    // Register all built-in adapters
     this.registerAdapter(new ClaudeCodeAdapter());
+    this.registerAdapter(new CursorAdapter());
+    this.registerAdapter(new DroidAdapter());
+    this.registerAdapter(new OpenCodeAdapter());
+    this.registerAdapter(new AmpAdapter());
   }
 
   /**
@@ -75,5 +83,43 @@ export class AgentManager {
    */
   getAvailableAgents(): string[] {
     return Array.from(this.adapters.keys());
+  }
+
+  /**
+   * Validate multiple adapters
+   * Returns map of adapter name to validation result
+   */
+  async validateAdapters(
+    adapterNames: string[]
+  ): Promise<Map<string, ValidationResult>> {
+    const results = new Map<string, ValidationResult>();
+
+    for (const name of adapterNames) {
+      const adapter = this.requireAdapter(name);
+      if (adapter.validate) {
+        results.set(name, await adapter.validate());
+      } else {
+        // No validation method - assume valid
+        results.set(name, { valid: true });
+      }
+    }
+
+    return results;
+  }
+
+  /**
+   * Get adapter choices for inquirer checkbox prompt
+   * Returns array of choices with pre-selected defaults
+   */
+  getAdapterChoices(): Array<{
+    name: string;
+    value: string;
+    checked?: boolean;
+  }> {
+    return Array.from(this.adapters.values()).map((adapter) => ({
+      name: `${adapter.displayName} (${adapter.directory})`,
+      value: adapter.name,
+      checked: adapter.name === 'claude-code', // Pre-select Claude Code by default
+    }));
   }
 }

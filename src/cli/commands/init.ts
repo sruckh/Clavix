@@ -5,6 +5,7 @@ import * as path from 'path';
 import JSON5 from 'json5';
 import { AgentManager } from '../../core/agent-manager';
 import { DocInjector } from '../../core/doc-injector';
+import { AgentsMdGenerator } from '../../core/adapters/agents-md-generator';
 import { FileSystem } from '../../utils/file-system';
 import { ClavixConfig, DEFAULT_CONFIG } from '../../types/config';
 import { CommandTemplate } from '../../types/agent';
@@ -37,38 +38,57 @@ export default class Init extends Command {
         }
       }
 
-      // Select agent
+      // Select providers (multi-select)
       const agentManager = new AgentManager();
-      // const agents = agentManager.getAvailableAgents();
 
-      console.log(chalk.gray('Select your AI agent:\n'));
+      console.log(chalk.gray('Select AI development tools to support:\n'));
+      console.log(chalk.gray('(Space to select, Enter to confirm)\n'));
 
-      const { selectedAgent } = await inquirer.prompt([
+      const { selectedProviders } = await inquirer.prompt([
         {
-          type: 'list',
-          name: 'selectedAgent',
-          message: 'Which AI agent are you using?',
+          type: 'checkbox',
+          name: 'selectedProviders',
+          message: 'Which AI tools are you using?',
           choices: [
             {
-              name: 'Claude Code - AI-powered CLI for Claude',
+              name: 'Claude Code (.claude/commands/clavix/)',
               value: 'claude-code',
+              checked: true,
             },
             {
-              name: chalk.gray('Cursor (coming soon)'),
-              value: null,
-              disabled: true,
+              name: 'Cursor (.cursor/commands/)',
+              value: 'cursor',
             },
             {
-              name: chalk.gray('Windsurf (coming soon)'),
-              value: null,
-              disabled: true,
+              name: 'Droid CLI (.factory/commands/)',
+              value: 'droid',
+            },
+            {
+              name: 'OpenCode (.opencode/command/)',
+              value: 'opencode',
+            },
+            {
+              name: 'Amp (.agents/commands/)',
+              value: 'amp',
+            },
+            new inquirer.Separator(),
+            {
+              name: 'agents.md (Universal - for tools without slash commands)',
+              value: 'agents-md',
+              checked: true,
             },
           ],
+          validate: (answer: string[]) => {
+            if (answer.length === 0) {
+              return 'You must select at least one provider.';
+            }
+            return true;
+          },
         },
       ]);
 
-      if (!selectedAgent) {
-        console.log(chalk.red('\n✗ No agent selected\n'));
+      if (!selectedProviders || selectedProviders.length === 0) {
+        console.log(chalk.red('\n✗ No providers selected\n'));
         return;
       }
 
@@ -78,22 +98,71 @@ export default class Init extends Command {
 
       // Generate config
       console.log(chalk.cyan('⚙️  Generating configuration...'));
-      await this.generateConfig(selectedAgent);
+      await this.generateConfig(selectedProviders);
 
       // Generate INSTRUCTIONS.md
       await this.generateInstructions();
 
-      // Migrate from old command structure if needed
-      const adapter = agentManager.requireAdapter(selectedAgent);
-      await this.migrateOldCommands(adapter);
+      // Generate commands for each selected provider
+      console.log(
+        chalk.cyan(
+          `\n📝 Generating commands for ${selectedProviders.length} provider(s)...\n`
+        )
+      );
 
-      // Generate slash commands
-      console.log(chalk.cyan(`📝 Generating ${adapter.displayName} slash commands...`));
-      await this.generateSlashCommands(adapter);
+      for (const providerName of selectedProviders) {
+        // Handle agents-md separately (it's not an adapter)
+        if (providerName === 'agents-md') {
+          console.log(chalk.gray('  ✓ Generating AGENTS.md...'));
+          await AgentsMdGenerator.generate();
+          continue;
+        }
 
-      // Inject documentation blocks
-      console.log(chalk.cyan('📄 Injecting documentation blocks...'));
-      await this.injectDocumentation(adapter);
+        const adapter = agentManager.requireAdapter(providerName);
+
+        console.log(chalk.gray(`  ✓ Generating ${adapter.displayName} commands...`));
+
+        // Validate before generating
+        if (adapter.validate) {
+          const validation = await adapter.validate();
+          if (!validation.valid) {
+            console.log(
+              chalk.yellow(`    ⚠ Validation warnings for ${adapter.displayName}:`)
+            );
+            validation.errors?.forEach((err) =>
+              console.log(chalk.yellow(`      - ${err}`))
+            );
+
+            const { continueAnyway } = await inquirer.prompt([
+              {
+                type: 'confirm',
+                name: 'continueAnyway',
+                message: 'Continue anyway?',
+                default: false,
+              },
+            ]);
+
+            if (!continueAnyway) {
+              console.log(chalk.yellow(`    ⊗ Skipped ${adapter.displayName}`));
+              continue;
+            }
+          }
+        }
+
+        // Migrate from old command structure if needed (Claude Code only)
+        if (providerName === 'claude-code') {
+          await this.migrateOldCommands(adapter);
+        }
+
+        // Generate slash commands
+        await this.generateSlashCommands(adapter);
+
+        // Inject documentation blocks (Claude Code only)
+        if (providerName === 'claude-code') {
+          console.log(chalk.gray('  ✓ Injecting CLAUDE.md documentation...'));
+          await this.injectDocumentation(adapter);
+        }
+      }
 
       // Success message
       console.log(chalk.bold.green('\n✅ Clavix initialized successfully!\n'));
@@ -125,10 +194,10 @@ export default class Init extends Command {
     }
   }
 
-  private async generateConfig(agent: string): Promise<void> {
+  private async generateConfig(providers: string[]): Promise<void> {
     const config: ClavixConfig = {
       ...DEFAULT_CONFIG,
-      agent,
+      providers,
     };
 
     const configPath = '.clavix/config.json';

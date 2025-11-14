@@ -60,11 +60,26 @@ Lo, L. S. (2023). "The CLEAR Path: A Framework for Enhancing Information Literac
 - **CLEAR Extraction** - Extract and optimize prompts using CLEAR framework, display both raw and CLEAR-enhanced versions
 - **Search & Filter** - Find sessions by project, agent, status, tags, keywords, or date range
 
-### 🤖 AI Agent Integration
+### 🤖 Multi-Provider AI Agent Integration
 
-- **Claude Code Support** - Slash commands (`/clavix:fast`, `/clavix:deep`, `/clavix:prd`, `/clavix:plan`, `/clavix:implement`, `/clavix:start`, `/clavix:summarize`) with auto-detection
+**Supported Tools:**
+
+| Tool | Slash Commands | Directory | Status |
+|------|----------------|-----------|--------|
+| **Claude Code** | ✅ | `.claude/commands/clavix/` | Fully Supported |
+| **Cursor** | ✅ | `.cursor/commands/` | Fully Supported |
+| **Droid CLI** | ✅ | `.factory/commands/` | Fully Supported |
+| **OpenCode** | ✅ | `.opencode/command/` | Fully Supported |
+| **Amp** | ✅ | `.agents/commands/` | Fully Supported |
+| **Universal (agents.md)** | ⚡ No slash commands | `AGENTS.md` | Fully Supported |
+
+**Features:**
+- **Multi-Select Support** - Choose multiple tools during `clavix init` (Space to select, Enter to confirm)
+- **Provider-Specific Formatting** - Automatically generates commands in each tool's native format
+- **Universal Fallback** - `agents.md` provides workflow instructions for tools without slash command support
+- **Slash Commands** - `/clavix:fast`, `/clavix:deep`, `/clavix:prd`, `/clavix:start`, `/clavix:summarize` available in all supported tools
 - **Managed Documentation** - Auto-inject and update instructions in `AGENTS.md` and `CLAUDE.md` with safe managed blocks
-- **Extensible Architecture** - Adapter pattern ready for future Cursor, Windsurf, and other agent integrations
+- **Extensible Architecture** - Plugin-based adapter pattern for easy addition of new providers
 
 ### ⚙️ Configuration & Management
 
@@ -82,7 +97,7 @@ Lo, L. S. (2023). "The CLEAR Path: A Framework for Enhancing Information Literac
 
 ### 🔧 CLI Commands
 
-- `clavix init` - Initialize Clavix in your project with agent selection
+- `clavix init` - Initialize Clavix in your project with multi-provider selection (checkbox UI)
 - `clavix fast <prompt>` - CLEAR-guided quick improvements (C, L, E components)
   - `--clear-only` - Show only CLEAR scores without improved prompt
   - `--framework-info` - Display CLEAR framework information
@@ -120,10 +135,22 @@ cd your-project
 clavix init
 ```
 
+You'll be prompted to select which AI tools to support:
+```
+? Which AI tools are you using? (Space to select, Enter to confirm)
+ ◉ Claude Code (.claude/commands/clavix/)
+ ◉ Cursor (.cursor/commands/)
+ ◯ Droid CLI (.factory/commands/)
+ ◉ OpenCode (.opencode/command/)
+ ◯ Amp (.agents/commands/)
+ ◉ agents.md (Universal)
+```
+
 This will:
 - Create `.clavix/` directory with configuration
-- Generate slash commands for your AI agent
-- Inject managed blocks into AGENTS.md and CLAUDE.md
+- Generate slash commands for all selected providers
+- Create universal `AGENTS.md` for tools without slash commands
+- Inject managed blocks into documentation files
 
 ### 2. Improve a Prompt with CLEAR Framework
 
@@ -150,9 +177,9 @@ Output:
 - **Adaptive Variations** - Alternative phrasings and structures (deep mode)
 - **Reflection Checklist** - Validation steps and edge cases (deep mode)
 
-### 3. Use Slash Commands (Claude Code)
+### 3. Use Slash Commands (All Providers)
 
-After initialization, use these CLEAR-enhanced commands in Claude Code:
+After initialization, use these CLEAR-enhanced commands in your AI tool:
 
 - `/clavix:fast [prompt]` - CLEAR-guided quick improvements (C, L, E)
 - `/clavix:deep [prompt]` - Full CLEAR framework analysis (C, L, E, A, R)

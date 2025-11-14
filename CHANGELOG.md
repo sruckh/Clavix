@@ -5,6 +5,71 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2025-11-14
+
+### 🎉 Major Features
+
+#### Multi-Provider Support
+- **Breaking Change**: Config now uses `providers: string[]` instead of `agent: string`
+- Interactive multi-select checkbox UI during `clavix init`
+- Select multiple AI development tools simultaneously
+- Automatic config migration from v1.3.0 → v1.4.0
+
+#### New Provider Support
+- ✨ **Cursor** - `.cursor/commands/` (flat structure, no frontmatter)
+- ✨ **Droid CLI** - `.factory/commands/` (YAML frontmatter, `$ARGUMENTS` placeholder)
+- ✨ **OpenCode** - `.opencode/command/` (frontmatter with description, `$ARGUMENTS`)
+- ✨ **Amp** - `.agents/commands/` (simple markdown, experimental executable support)
+- ✨ **Universal agents.md** - Workflow instructions for tools without slash command support
+
+### 🏗️ Architecture Improvements
+- Introduced `BaseAdapter` abstract class for shared adapter logic
+- Plugin-based provider system ensures backward compatibility
+- Per-provider validation before command generation
+- Template system with `{{ARGS}}` placeholder replaced by adapter-specific formats
+- Isolated provider modules - adding new providers doesn't affect existing ones
+
+### 🔧 Enhancements
+- Enhanced `AgentAdapter` interface with `directory`, `fileExtension`, `features` properties
+- Added `ProviderFeatures` interface for provider-specific capabilities
+- Added `ValidationResult` interface for adapter validation
+- Config migration utilities: `migrateConfig()`, `isLegacyConfig()`
+- `AgentManager` now registers all 5 provider adapters
+- Per-provider validation with error/warning reporting
+- Improved init command UX with provider descriptions and checkbox validation
+
+### 📝 Templates
+- Created provider-specific template directories for all 5 providers
+- Universal `agents.md` template with workflow detection and CLEAR framework integration
+- Standardized `{{ARGS}}` placeholder across all base templates
+- Provider adapters transform placeholders to tool-specific formats
+
+### 🧪 Testing & Quality
+- TypeScript compilation successful across all new code
+- Backward compatibility maintained for v1.3.0 configurations
+- BaseAdapter inheritance tested across all provider adapters
+
+### 📚 Documentation
+- Updated README with supported tools table
+- Multi-provider selection example in Quick Start
+- Updated "AI Agent Integration" section
+- Comprehensive PRD and implementation plan in `.clavix/outputs/`
+- Migration guide for v1.3.0 users
+
+### ⚠️ Breaking Changes
+- Config field `agent: string` replaced with `providers: string[]`
+- Old configs automatically migrated on next `clavix init`
+- No manual migration required - fully automated
+
+### 📦 Migration Guide
+If upgrading from v1.3.0:
+1. Run `clavix init` in your project
+2. Select desired providers (old provider pre-selected)
+3. Config automatically migrated to v1.4.0 format
+4. Slash commands regenerated for all selected providers
+
+---
+
 ## [1.3.0] - 2025-11-14
 
 ### Added
