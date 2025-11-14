@@ -5,6 +5,52 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2025-11-14
+
+### Added
+
+- **PRD-to-Implementation Workflow** - Seamless transition from PRD to coded features
+  - `clavix plan` command - Generates implementation task breakdown from PRD
+  - `clavix implement` command - Executes tasks with AI assistance and session resume
+  - Tasks organized into logical phases with CLEAR-optimized atomic descriptions
+  - Markdown checkbox format (`- [ ]` / `- [x]`) for stateful progress tracking
+  - Task references to PRD sections for context and traceability
+
+- **Git Auto-Commit Integration** - Optional automatic commits during implementation
+  - Four commit strategies: per-task, per-5-tasks, per-phase, or none
+  - Interactive CLI prompt for commit preference selection
+  - Descriptive commit messages with task lists and project context
+  - `CommitScheduler` class for tracking commit timing
+  - `GitManager` class for git operations and validation
+
+- **Session Resume Capability** - Pick up where you left off
+  - Stateful task tracking via markdown checkboxes
+  - Automatic detection of first incomplete task
+  - Progress statistics (completed/total/percentage)
+  - Configuration file (`.clavix-implement-config.json`) for AI agent coordination
+
+- **Core Classes**:
+  - `TaskManager` - PRD parsing, task generation, file I/O, progress tracking
+  - `GitManager` - Git operations, commit creation, repository validation
+  - `CommitScheduler` - Strategy-based commit timing logic
+
+- **Slash Commands**:
+  - `/clavix:plan` - Generate task breakdown from PRD
+  - `/clavix:implement` - Execute tasks with AI assistance
+
+### Changed
+
+- **Command Structure**: Updated slash command file organization
+  - Commands now in `.claude/commands/clavix/` subdirectory
+  - README.md updated with plan and implement command documentation
+  - CLAUDE.md updated with new workflow commands
+
+### Documentation
+
+- **README.md**: New "PRD-to-Implementation Workflow" feature section
+- **Slash Commands**: Detailed implementation guides for AI agents
+- **Examples**: Git commit format and task tracking examples
+
 ## [1.2.0] - 2025-01-13
 
 ### Added

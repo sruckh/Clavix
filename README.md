@@ -46,6 +46,13 @@ Lo, L. S. (2023). "The CLEAR Path: A Framework for Enhancing Information Literac
 - **Dual Output Format** - Comprehensive team PRD (`full-prd.md`) + CLEAR-optimized AI-ready version (`quick-prd.md`)
 - **Handlebars Templates** - Fully customizable PRD formats with template override support
 
+### 🚀 PRD-to-Implementation Workflow
+
+- **Task Planning** - Auto-generate implementation task breakdown from PRD with CLEAR-optimized atomic tasks
+- **Session Resume** - Stateful task tracking via markdown checkboxes, resume from last incomplete task
+- **Git Auto-Commit** - Optional automatic commits (per-task, per-5-tasks, per-phase) with descriptive messages
+- **AI-Assisted Execution** - Seamless handoff from strategic planning (PRD) to tactical implementation
+
 ### 💬 CLEAR-Optimized Conversational Mode
 
 - **Session Management** - Track conversations with UUID-based sessions, metadata, tags, and status tracking
@@ -55,7 +62,7 @@ Lo, L. S. (2023). "The CLEAR Path: A Framework for Enhancing Information Literac
 
 ### 🤖 AI Agent Integration
 
-- **Claude Code Support** - Slash commands (`/clavix:fast`, `/clavix:deep`, `/clavix:prd`, `/clavix:start`, `/clavix:summarize`) with auto-detection
+- **Claude Code Support** - Slash commands (`/clavix:fast`, `/clavix:deep`, `/clavix:prd`, `/clavix:plan`, `/clavix:implement`, `/clavix:start`, `/clavix:summarize`) with auto-detection
 - **Managed Documentation** - Auto-inject and update instructions in `AGENTS.md` and `CLAUDE.md` with safe managed blocks
 - **Extensible Architecture** - Adapter pattern ready for future Cursor, Windsurf, and other agent integrations
 
@@ -83,6 +90,8 @@ Lo, L. S. (2023). "The CLEAR Path: A Framework for Enhancing Information Literac
   - `--clear-only` - Show only CLEAR scores without improved prompt
   - `--framework-info` - Display CLEAR framework information
 - `clavix prd` - Generate CLEAR-validated PRD through Socratic questions
+- `clavix plan` - Generate implementation task breakdown from PRD
+- `clavix implement` - Execute tasks from the implementation plan with AI assistance
 - `clavix start` - Begin conversational session for iterative development
 - `clavix summarize [session-id]` - Extract and CLEAR-optimize prompts from conversation
 - `clavix list` - List sessions and outputs with filtering options
@@ -148,6 +157,8 @@ After initialization, use these CLEAR-enhanced commands in Claude Code:
 - `/clavix:fast [prompt]` - CLEAR-guided quick improvements (C, L, E)
 - `/clavix:deep [prompt]` - Full CLEAR framework analysis (C, L, E, A, R)
 - `/clavix:prd` - Generate CLEAR-validated PRD
+- `/clavix:plan` - Generate task breakdown from PRD
+- `/clavix:implement` - Execute tasks with AI assistance
 - `/clavix:start` - Start conversational mode
 - `/clavix:summarize` - Extract and CLEAR-optimize from conversation
 
@@ -223,6 +234,84 @@ clavix prd
 Creates two files:
 - `full-prd.md` - Comprehensive document for team alignment
 - `quick-prd.md` - Condensed version for AI consumption
+
+### `clavix plan`
+
+Generate implementation task breakdown from PRD.
+
+```bash
+clavix plan
+```
+
+**Features:**
+- Analyzes PRD and generates `tasks.md` with CLEAR-optimized tasks
+- Organizes tasks into logical phases/sections
+- Creates markdown checkbox format for progress tracking
+- Each task is atomic and independently implementable
+- Tasks reference specific PRD sections for context
+
+**Options:**
+```bash
+clavix plan --project my-app           # Specify PRD project
+clavix plan --prd-path .clavix/outputs/my-project  # Direct path
+clavix plan --overwrite                 # Regenerate existing tasks.md
+```
+
+**Output format:**
+```markdown
+## Phase 1: Authentication
+- [ ] Implement user registration endpoint
+- [ ] Add password hashing with bcrypt
+- [ ] Create JWT token generation
+
+## Phase 2: Authorization
+- [ ] Implement role-based access control
+- [ ] Add middleware for protected routes
+```
+
+### `clavix implement`
+
+Execute tasks from the implementation plan with AI assistance.
+
+```bash
+clavix implement
+```
+
+**Workflow:**
+1. Reads `tasks.md` and finds first incomplete task
+2. Shows current progress (completed/total)
+3. Prompts for git auto-commit preferences
+4. Creates configuration for AI agent
+5. AI agent implements tasks sequentially
+6. Marks completed tasks: `[ ]` → `[x]`
+7. Creates commits based on strategy
+8. Resumes from last checkpoint in new sessions
+
+**Git Auto-Commit Strategies:**
+- **Per phase** - Commit when all tasks in a phase complete
+- **Per 5 tasks** - Commit after every 5 tasks
+- **Per task** - Commit after each individual task
+- **None** - Manual git management
+
+**Options:**
+```bash
+clavix implement --project my-app       # Specify PRD project
+clavix implement --no-git               # Skip git setup
+clavix implement --commit-strategy per-task  # Set commit strategy
+```
+
+**Example commit message:**
+```
+clavix: Implement user authentication
+
+Completed tasks:
+- Implement user registration endpoint
+- Add password hashing with bcrypt
+- Create JWT token generation
+
+Project: my-app
+Generated by Clavix /clavix:implement
+```
 
 ### `clavix start`
 
@@ -335,15 +424,23 @@ your-project/
 │   ├── INSTRUCTIONS.md     # Usage guide
 │   ├── sessions/           # Conversational mode sessions
 │   ├── outputs/            # Generated PRDs and prompts
+│   │   └── project-name/
+│   │       ├── PRD.md      # Full PRD
+│   │       ├── PRD-quick.md  # Quick PRD
+│   │       ├── tasks.md    # Implementation tasks
+│   │       └── .clavix-implement-config.json  # Implementation config
 │   └── templates/          # Custom templates (optional)
 ├── AGENTS.md               # Updated with Clavix block
 ├── CLAUDE.md               # Updated with Clavix block (if Claude Code)
 └── .claude/commands/       # Generated slash commands (if Claude Code)
-    ├── clavix:fast.md
-    ├── clavix:deep.md
-    ├── clavix:prd.md
-    ├── clavix:start.md
-    └── clavix:summarize.md
+    ├── clavix/
+    │   ├── fast.md
+    │   ├── deep.md
+    │   ├── prd.md
+    │   ├── plan.md
+    │   ├── implement.md
+    │   ├── start.md
+    │   └── summarize.md
 ```
 
 ## Configuration
